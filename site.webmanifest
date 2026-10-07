@@ -1,0 +1,13 @@
+{
+  "name": "Tucargo Düsseldorf",
+  "short_name": "Tucargo",
+  "description": "Envíos aéreos y marítimos de Alemania a Venezuela.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#061A2F",
+  "theme_color": "#061A2F",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
