@@ -1,0 +1,55 @@
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: var(--space-md);
+}
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 14, 26, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.modal__panel {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  overscroll-behavior: contain;
+}
+.modal__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: 20px 24px;
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+.modal__title { font-size: var(--text-h4); }
+.modal__close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--fg);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+.modal__close:hover { background: var(--gray-100); transform: rotate(90deg); }
+.modal__body { padding: 24px; }
+
+@media (max-width: 600px) {
+  .modal { align-items: end; padding: 0; }
+  .modal__panel { border-radius: var(--radius-xl) var(--radius-xl) 0 0; max-height: 92dvh; }
+}

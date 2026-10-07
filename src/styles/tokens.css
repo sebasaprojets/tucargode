@@ -1,0 +1,166 @@
+/* ==========================================================================
+   TUCARGO — Design Tokens
+   Fuente única para color, tipografía, espaciado, radios, sombras y motion.
+   ========================================================================== */
+
+:root {
+  /* ---- Brand palette ---- */
+  --navy-950: #030E1A;
+  --navy-900: #061A2F;
+  --navy-800: #0A2540;
+  --navy-700: #0F3257;
+  --navy-600: #16416F;
+
+  --blue-700: #084A92;
+  --blue-600: #0B5DB7;
+  --blue-500: #1A70D1;
+  --blue-400: #4C93E6;
+  --blue-300: #8BBDF4;
+  --blue-100: #E3EFFC;
+  --blue-50: #F1F7FE;
+
+  --red-600: #C62828;
+  --red-500: #E53935;
+  --red-400: #EF5B57;
+  --red-50: #FDECEC;
+
+  --gray-950: #111827;
+  --gray-700: #374151;
+  --gray-600: #4B5563;
+  --gray-500: #6B7280;
+  --gray-300: #D1D9E2;
+  --gray-200: #E2E8F0;
+  --gray-100: #EDF1F5;
+  --gray-50: #F4F7FA;
+  --white: #FFFFFF;
+
+  /* ---- Semantic colors ---- */
+  --color-primary: var(--blue-600);
+  --color-primary-hover: var(--blue-500);
+  --color-primary-dark: var(--blue-700);
+  --color-primary-soft: var(--blue-100);
+  --color-accent: var(--red-500);
+  --color-accent-hover: var(--red-600);
+  --color-background: var(--gray-50);
+  --color-background-dark: var(--navy-900);
+  --color-surface: var(--white);
+  --color-surface-elevated: var(--white);
+  --color-text: var(--gray-950);
+  --color-text-secondary: var(--gray-600);
+  --color-text-muted: var(--gray-500);
+  --color-border: var(--gray-200);
+  --color-border-strong: var(--gray-300);
+  --color-success: #16A34A;
+  --color-success-soft: #E8F7EE;
+  --color-warning: #D97706;
+  --color-warning-soft: #FEF5E7;
+  --color-error: #DC2626;
+  --color-error-soft: #FDECEC;
+  --color-whatsapp: #25D366;
+  --color-whatsapp-dark: #128C7E;
+  --color-focus: var(--blue-400);
+
+  /* ---- Typography ---- */
+  --font-heading: 'Manrope Variable', 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', monospace;
+
+  --text-display: clamp(2.5rem, 1.6rem + 4.4vw, 5.25rem);
+  --text-h1: clamp(2.25rem, 1.6rem + 3vw, 4rem);
+  --text-h2: clamp(1.875rem, 1.4rem + 2.1vw, 3.125rem);
+  --text-h3: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+  --text-h4: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  --text-body-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-caption: 0.75rem;
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.2;
+  --leading-normal: 1.55;
+  --tracking-tight: -0.035em;
+  --tracking-snug: -0.02em;
+  --tracking-wide: 0.14em;
+
+  /* ---- Spacing (4px grid) ---- */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-section: clamp(4.5rem, 3rem + 7vw, 9rem);
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --container: 1240px;
+
+  /* ---- Radius ---- */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
+
+  /* ---- Shadows ---- */
+  --shadow-sm: 0 1px 2px rgba(6, 26, 47, 0.06), 0 1px 3px rgba(6, 26, 47, 0.08);
+  --shadow-md: 0 4px 12px -2px rgba(6, 26, 47, 0.08), 0 2px 4px -2px rgba(6, 26, 47, 0.06);
+  --shadow-lg: 0 24px 48px -12px rgba(6, 26, 47, 0.18), 0 8px 16px -8px rgba(6, 26, 47, 0.1);
+  --shadow-glow: 0 0 0 1px rgba(76, 147, 230, 0.25), 0 12px 40px -8px rgba(11, 93, 183, 0.45);
+  --shadow-focus: 0 0 0 3px rgba(76, 147, 230, 0.45);
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --transition-fast: 150ms var(--ease-out);
+  --transition-normal: 280ms var(--ease-out);
+  --transition-slow: 600ms var(--ease-out);
+
+  /* ---- Layers ---- */
+  --z-header: 50;
+  --z-float: 60;
+  --z-menu: 70;
+  --z-modal: 80;
+
+  --header-h: 72px;
+
+  /* Contextual (overridden per theme) */
+  --fg: var(--color-text);
+  --fg-muted: var(--color-text-secondary);
+  --surface: var(--color-surface);
+  --surface-2: var(--gray-50);
+  --line: var(--color-border);
+}
+
+/* Contextual themes: components read --fg / --surface / --line */
+.theme-dark {
+  --fg: var(--white);
+  --fg-muted: rgba(255, 255, 255, 0.7);
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-2: rgba(255, 255, 255, 0.07);
+  --line: rgba(255, 255, 255, 0.1);
+  --color-focus: var(--blue-300);
+  background-color: var(--navy-900);
+  color: var(--fg);
+}
+
+.theme-light {
+  --fg: var(--color-text);
+  --fg-muted: var(--color-text-secondary);
+  --surface: var(--white);
+  --surface-2: var(--gray-50);
+  --line: var(--color-border);
+  background-color: var(--color-background);
+  color: var(--fg);
+}
+
+.theme-white {
+  --fg: var(--color-text);
+  --fg-muted: var(--color-text-secondary);
+  --surface: var(--gray-50);
+  --surface-2: var(--white);
+  --line: var(--color-border);
+  background-color: var(--white);
+  color: var(--fg);
+}

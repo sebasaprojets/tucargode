@@ -1,0 +1,81 @@
+.connection {
+  background:
+    radial-gradient(60% 50% at 10% 100%, rgba(229, 57, 53, 0.07), transparent 70%),
+    linear-gradient(to bottom, var(--navy-950), var(--navy-900));
+}
+.chain {
+  position: relative;
+  display: grid;
+  gap: var(--space-xl);
+  margin: 0;
+  padding: 0 0 0 44px;
+  list-style: none;
+}
+.chain__rail {
+  position: absolute;
+  left: 11px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.chain__fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, var(--blue-300), var(--blue-500) 60%, var(--color-accent));
+  transform-origin: top;
+  transform: scaleY(var(--p, 0));
+}
+.chain__item { position: relative; opacity: 0.38; transition: opacity var(--transition-slow); }
+.chain__item.is-active { opacity: 1; }
+.chain__node {
+  position: absolute;
+  left: -44px;
+  top: 2px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--navy-900);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  transition: border-color var(--transition-slow), box-shadow var(--transition-slow);
+}
+.chain__node span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: background-color var(--transition-slow), transform var(--transition-slow);
+}
+.chain__item.is-active .chain__node { border-color: var(--blue-300); box-shadow: 0 0 0 6px rgba(76, 147, 230, 0.12); }
+.chain__item.is-active .chain__node span { background: var(--blue-300); transform: scale(1.1); }
+.chain__item.is-last.is-active .chain__node { border-color: var(--color-accent); box-shadow: 0 0 0 6px rgba(229, 57, 53, 0.15); }
+.chain__item.is-last.is-active .chain__node span { background: var(--color-accent); }
+.chain__index { font-family: var(--font-mono); font-size: 0.75rem; color: var(--blue-300); }
+.chain__label {
+  margin-top: 4px;
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: var(--tracking-tight);
+}
+.chain__item.is-last .chain__label { color: var(--white); }
+.chain__item.is-last.is-active .chain__label { background: linear-gradient(90deg, #fff, #EF5B57); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.chain__text { margin-top: 6px; max-width: 320px; color: var(--fg-muted); font-size: var(--text-small); }
+
+@media (min-width: 1024px) {
+  .chain {
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-lg);
+    padding: 0;
+  }
+  .chain__rail { left: 12px; right: 12px; top: 11px; bottom: auto; width: auto; height: 2px; }
+  .chain__fill {
+    transform-origin: left;
+    transform: scaleX(var(--p, 0));
+    background: linear-gradient(to right, var(--blue-300), var(--blue-500) 60%, var(--color-accent));
+  }
+  .chain__node { position: relative; left: 0; top: 0; margin-bottom: 20px; }
+}
