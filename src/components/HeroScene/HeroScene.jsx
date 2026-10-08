@@ -26,7 +26,21 @@ function CargoPlane() {
       <path d="M215 -6 L300 -6 L262 -52 L240 -52 Z" fill="#6F8AA3" opacity="0.8" />
       {/* Estabilizador vertical */}
       <path d="M430 -18 L452 -18 Q470 -60 492 -82 L512 -82 L500 -18 Z" fill="url(#hsPlaneBody)" />
-      <path d="M476 -60 L506 -60 L504 -50 L472 -50 Z" fill="#CC4D47" />
+      {/* Bandera de Venezuela en la cola (inclinada como el estabilizador) */}
+      <g transform="translate(480 -66) skewX(-20)">
+        <rect width="28" height="6" fill="#FFCC00" />
+        <rect y="6" width="28" height="6" fill="#00247D" />
+        <rect y="12" width="28" height="6" fill="#CF142B" />
+        {[-70, -50, -30, -10, 10, 30, 50, 70].map((a) => (
+          <circle
+            key={a}
+            cx={14 + 5.2 * Math.sin((a * Math.PI) / 180)}
+            cy={11.2 - 3.4 * Math.cos((a * Math.PI) / 180)}
+            r="0.55"
+            fill="#FFFFFF"
+          />
+        ))}
+      </g>
       {/* Fuselaje */}
       <path
         d="M0 2 C6 -12 30 -20 70 -21 L440 -21 C470 -21 500 -14 520 -6 L520 6 C500 12 470 14 440 14 L70 14 C30 14 4 12 0 2 Z"
