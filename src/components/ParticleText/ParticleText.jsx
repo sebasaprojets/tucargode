@@ -197,7 +197,8 @@ export default function ParticleText({ targetRef, progress, wind = [1, -0.6], ga
   };
 
   useMotionValueEvent(progress, 'change', (v) => {
-    if (!reduce) requestAnimationFrame(() => draw(v));
+    // Se dibuja en el mismo cuadro en que cambia el scroll (sin desfase)
+    if (!reduce) draw(v);
   });
 
   if (reduce) return null;

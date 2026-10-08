@@ -1,10 +1,17 @@
 /**
  * Scroll del sitio:
- * - Desplazamiento suave con inercia (Lenis) solo en escritorio con ratón y sin
- *   prefers-reduced-motion. En móvil se mantiene el scroll nativo (ya es fluido).
+ * - Desplazamiento suave con inercia (Lenis) en escritorio (ratón y pantalla ancha),
+ *   también con «reducir movimiento» activo: sin él, la rueda avanza a saltos y las
+ *   capas con parallax (que se calculan en JS) van un cuadro por detrás y «tiemblan».
+ *   Lenis se ejecuta dentro del bucle de cuadros de Framer Motion, así el scroll y
+ *   las transformaciones que dependen de él se actualizan en el mismo cuadro.
+ *   En móvil y tablet se mantiene el scroll nativo.
  * - Navegación por anclas que garantiza que las secciones diferidas estén
  *   montadas antes de calcular la posición.
  */
+import { frame } from 'framer-motion';
+import { DESKTOP_MOTION_QUERY } from '../hooks/useMotionPreference';
+
 export const MOUNT_ALL_EVENT = 'tucargo:mount-all';
 
 let lenis = null;
@@ -16,16 +23,18 @@ const headerOffset = () => {
 };
 
 export async function initSmoothScroll() {
-  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!fine || reduce || lenis) return null;
+  if (!window.matchMedia(DESKTOP_MOTION_QUERY).matches || lenis) return null;
   const { default: Lenis } = await import('lenis');
-  lenis = new Lenis({ lerp: 0.11, wheelMultiplier: 1, smoothWheel: true });
-  const raf = (time) => {
-    lenis?.raf(time);
-    requestAnimationFrame(raf);
-  };
-  requestAnimationFrame(raf);
+  if (lenis) return lenis;
+  lenis = new Lenis({ lerp: 0.12, wheelMultiplier: 1, smoothWheel: true, syncTouch: false });
+  // Un único bucle: Lenis mueve el scroll en el primer paso («setup») del frameloop
+  // de Framer y avisa en el acto, así useScroll mide y las capas se pintan en ese
+  // mismo cuadro (sin el evento nativo llegarían un cuadro tarde y «temblarían»).
+  const tick = ({ timestamp }) => lenis?.raf(timestamp);
+  frame.setup(tick, true);
+  lenis.on('scroll', (l) => {
+    if (l.isScrolling === 'smooth') window.dispatchEvent(new Event('scroll'));
+  });
   if (lockCount > 0) lenis.stop();
   return lenis;
 }
@@ -49,7 +58,7 @@ export async function scrollToId(id, { focus = true } = {}) {
   await nextFrame();
   const el = document.getElementById(id);
   if (!el) return;
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches && !lenis;
   const top = id === 'inicio' ? 0 : el.getBoundingClientRect().top + window.scrollY - headerOffset();
   if (lenis) lenis.scrollTo(top, { duration: 1.2 });
   else window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
