@@ -28,6 +28,21 @@ export const siteConfig = {
     },
   },
 
+  /**
+   * Vídeos cinematográficos opcionales (p. ej. generados con Higgsfield).
+   * Coloca los archivos en /public/media/ (MP4 H.264 y, si es posible, WebM),
+   * 1920×1080, 8–15 s, en bucle, sin audio, ≤ 4 MB. Mientras sean null se
+   * muestra la escena ilustrada animada.
+   */
+  media: {
+    voyage: {
+      mp4: null, // p. ej. 'media/travesia.mp4'
+      webm: null, // p. ej. 'media/travesia.webm'
+      poster: null, // p. ej. 'media/travesia.webp'
+      mobileMp4: null, // versión vertical 1080×1920 opcional
+    },
+  },
+
   contact: {
     phoneDisplay: '+49 163 8789774',
     phoneHref: 'tel:+491638789774',

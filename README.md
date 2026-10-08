@@ -58,6 +58,27 @@ Os dados vêm do conteúdo publicado em tucargo.de (início, «¿Quiénes somos?
 - Texturas: NASA Blue Marble / Black Marble (domínio público), via [three-globe](https://github.com/vasturiano/three-globe), convertidas para WebP 2048×1024.
 - Pontos de terra: Natural Earth (domínio público) via `world-atlas`. Para regenerar: `npm run globe:dots`.
 
+## Experiência e movimento
+
+- **Hero**: globo interativo (WebGL com texturas NASA; arrastar, inércia, volta à rota).
+- **Travessia** (`src/components/Connection/`): cena ilustrada no estilo do logo, guiada pelo scroll — amanhecer em Düsseldorf (Rheinturm, Medienhafen, ponte do Reno), navio da marca cruzando o Atlântico, pôr do sol na costa venezuelana (El Ávila, Puerto Cabello). As 5 etapas aparecem em sequência.
+- **Distância** (`src/components/Distance/`): globo + «≈ 7.965 km en línea recta» (calculado entre Düsseldorf e Caracas) e a mensagem «Ninguna distancia es suficiente para separar a una familia».
+- Microinterações: botões magnéticos, cartões com inclinação 3D, faixa infinita que reage à velocidade do scroll, barra de progresso, rolagem suave (Lenis) no desktop, barra de ações fixa no celular.
+- Tudo respeita `prefers-reduced-motion` e pausa fora da tela.
+
+## Vídeos cinematográficos (Higgsfield)
+
+A seção da travessia aceita um vídeo no lugar da ilustração: preencha `siteConfig.media.voyage` (`mp4`, `webm`, `poster`, `mobileMp4`) com arquivos em `public/media/`. Recomendações: 1920×1080 (e 1080×1920 para celular), 8–15 s em loop, sem áudio, ≤ 4 MB, H.264.
+
+Prompts sugeridos para gerar no Higgsfield:
+
+1. **Travessia (horizontal)** — *"Cinematic slow aerial tracking shot of a red-hulled cargo ship loaded with wooden crates sailing across a calm turquoise Atlantic ocean at golden hour, soft clouds, gentle waves, warm sunlight, slow camera drift, photorealistic, 4K, seamless loop, no text, no logos"*
+2. **Travessia (vertical, celular)** — mesmo prompt, *"vertical 9:16 framing, ship centered"*.
+3. **Avião de carga** — *"Slow-motion cinematic shot of a cargo airplane taking off at dusk, runway lights, subtle lens flare, deep blue sky, smooth camera pan, photorealistic, seamless loop, no text"*.
+4. **Chegada / família** — *"Warm cinematic close-up of hands receiving a cardboard package at a doorstep in a sunny Caribbean neighborhood, shallow depth of field, slow push-in, soft natural light, no faces, no text"*.
+
+Para usar o Higgsfield direto daqui: libere `higgsfield.ai`/`api.higgsfield.ai` na rede do ambiente e guarde a chave como `HIGGSFIELD_API_KEY` nos segredos do ambiente (nunca no código).
+
 ## Deploy
 
 O workflow `.github/workflows/deploy.yml` gera o build e publica `dist/` na branch `gh-pages` (GitHub Pages). O `base: './'` do Vite permite servir o site em qualquer subpasta.

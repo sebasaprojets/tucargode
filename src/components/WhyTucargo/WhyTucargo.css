@@ -21,7 +21,7 @@
 }
 .why__card:focus-visible { outline: 2px solid var(--blue-300); outline-offset: 2px; }
 @media (hover: hover) {
-  .why__card:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.05); }
+  .why__card:hover { transform: perspective(1000px) translateY(-4px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); background: rgba(255, 255, 255, 0.05); }
 }
 .why__icon {
   display: grid;

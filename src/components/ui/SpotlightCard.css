@@ -34,3 +34,10 @@
   .spotlight:hover::before,
   .spotlight:hover::after { opacity: 1; }
 }
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .spotlight--tilt {
+    transform-style: preserve-3d;
+    transition: transform 700ms var(--ease-out), box-shadow var(--transition-normal), border-color var(--transition-normal) !important;
+  }
+}

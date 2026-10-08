@@ -11,7 +11,9 @@ import MobileActionBar from './components/MobileActionBar/MobileActionBar';
 import { initAnchorNavigation, initSmoothScroll } from './lib/scroll';
 
 // Code splitting: todo lo que está bajo el primer pliegue se carga en chunks aparte.
+const Distance = lazy(() => import('./components/Distance/Distance'));
 const Services = lazy(() => import('./components/Services/Services'));
+const Marquee = lazy(() => import('./components/Marquee/Marquee'));
 const ShippingComparison = lazy(() => import('./components/ShippingComparison/ShippingComparison'));
 const Rates = lazy(() => import('./components/Rates/Rates'));
 const ShippingCalculator = lazy(() => import('./components/ShippingCalculator/ShippingCalculator'));
@@ -47,10 +49,16 @@ export default function App() {
         </div>
         <div id="conexion">
           <Connection />
-          <Stats />
         </div>
+        <DeferredSection id="distancia" minHeight="100vh">
+          <Distance />
+        </DeferredSection>
+        <Stats />
         <DeferredSection id="servicios">
           <Services />
+        </DeferredSection>
+        <DeferredSection minHeight="180px">
+          <Marquee />
         </DeferredSection>
         <DeferredSection id="envios">
           <ShippingComparison />

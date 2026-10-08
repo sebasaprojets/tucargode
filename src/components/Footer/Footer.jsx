@@ -1,6 +1,7 @@
 import { ArrowUp, Phone, Mail, MapPin } from 'lucide-react';
 import Logo from '../ui/Logo';
 import Button from '../ui/Button';
+import Magnetic from '../ui/Magnetic';
 import { WhatsAppIcon, InstagramIcon, XIcon } from '../ui/BrandIcons';
 import { navItems, siteConfig, whatsappLink } from '../../config/siteConfig';
 import { services } from '../../data/services';
@@ -17,9 +18,11 @@ export default function Footer() {
             Tu carga, en buenas manos<span className="accent-dot">.</span>
           </p>
           <div className="footer__cta-actions">
-            <Button href="#contacto" variant="accent">
-              Cotiza tu envío
-            </Button>
+            <Magnetic>
+              <Button href="#contacto" variant="accent">
+                Cotiza tu envío
+              </Button>
+            </Magnetic>
             <Button href={whatsappLink()} variant="secondary" iconLeft={<WhatsAppIcon size={18} />}>
               Hablar por WhatsApp
             </Button>

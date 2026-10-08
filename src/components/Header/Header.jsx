@@ -36,7 +36,7 @@ export default function Header() {
     <>
       <header className={`header ${scrolled || open ? 'is-scrolled' : ''} ${open ? 'is-open' : ''}`}>
         <div className="header__inner container">
-          <a href="#inicio" className="header__logo" aria-label="Tucargo — ir al inicio" onClick={() => setOpen(false)}>
+          <a href="#inicio" className="header__logo" aria-label="TUCARGO Düsseldorf — ir al inicio" onClick={() => setOpen(false)}>
             <Logo />
           </a>
 

@@ -3,6 +3,7 @@ import { Plane, Ship, Check, Sparkles } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import Reveal from '../ui/Reveal';
 import Button from '../ui/Button';
+import Magnetic from '../ui/Magnetic';
 import ShippingAssistant from './ShippingAssistant';
 import { comparison } from '../../data/content';
 import './ShippingComparison.css';
@@ -59,9 +60,11 @@ export default function ShippingComparison() {
           </Reveal>
         </div>
         <Reveal className="comparison__cta" delay={0.1}>
-          <Button variant="primary" size="lg" onClick={() => setOpen(true)} iconLeft={<Sparkles size={18} aria-hidden="true" />}>
-            ¿Cuál es mejor para mí?
-          </Button>
+          <Magnetic>
+            <Button variant="primary" size="lg" onClick={() => setOpen(true)} iconLeft={<Sparkles size={18} aria-hidden="true" />}>
+              ¿Cuál es mejor para mí?
+            </Button>
+          </Magnetic>
           <p>Responde 2 preguntas y te orientamos en segundos.</p>
         </Reveal>
       </div>

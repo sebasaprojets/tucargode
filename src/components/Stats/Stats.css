@@ -1,5 +1,5 @@
 .stats {
-  padding-block: 0 var(--space-section);
+  padding-block: var(--space-2xl) var(--space-section);
   background: var(--navy-900);
 }
 .stats__grid {

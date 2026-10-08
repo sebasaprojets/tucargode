@@ -16,7 +16,7 @@
 .service-card::after { background: radial-gradient(240px circle at var(--mx) var(--my), rgba(1, 157, 216, 0.55), transparent 60%); }
 @media (hover: hover) {
   .service-card:hover {
-    transform: translateY(-6px);
+    transform: perspective(1000px) translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     box-shadow: var(--shadow-lg);
     border-color: transparent;
   }
@@ -38,7 +38,7 @@
   .service-card:hover .service-card__icon {
     background: var(--color-primary);
     color: var(--white);
-    transform: rotate(-6deg) translateY(-2px);
+    transform: rotate(-6deg) translateY(-2px) translateZ(30px);
   }
 }
 .service-card__index { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-muted); }

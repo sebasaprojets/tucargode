@@ -9,7 +9,7 @@ export default function ServiceCard({ service, index }) {
   const external = cta.type === 'whatsapp';
 
   return (
-    <SpotlightCard as="article" className="service-card">
+    <SpotlightCard as="article" className="service-card" tilt={7}>
       <div className="service-card__top">
         <span className="service-card__icon" aria-hidden="true">
           <Icon size={26} strokeWidth={1.6} />

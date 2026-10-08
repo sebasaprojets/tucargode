@@ -154,7 +154,7 @@ const hidden = (x, y, z) => z < 0 && x * x + y * y < 1;
  * - Arrastrar (ratón o dedo) para girar, con inercia; vuelve solo a la ruta.
  * - Teclado: flechas para girar, Inicio para recentrar.
  */
-export default function Globe() {
+export default function Globe({ showDistance = true }) {
   const wrapRef = useRef(null);
   const canvasRef = useRef(null); // capa dinámica: rutas, avión, barco, pulsos
   const baseRef = useRef(null); // capa estática: esfera, puntos, atmósfera (solo se redibuja si cambia la cámara)
@@ -213,7 +213,7 @@ export default function Globe() {
     let H = 0;
     let raf = 0;
     let running = false;
-    let visible = true;
+    let visible = false; // el IntersectionObserver lo activa: la intro empieza al entrar en pantalla
     let start = null;
     let lastCount = -1;
     let glFadeStart = null;
@@ -764,7 +764,7 @@ export default function Globe() {
             <Flag code="ve" size={16} /> Venezuela
           </span>
         </div>
-        <div ref={badge} className="globe__badge" aria-hidden="true">
+        <div ref={badge} className="globe__badge" aria-hidden="true" hidden={!showDistance}>
           <span className="globe__badge-inner">
             <span className="globe__badge-value">
               ≈ <span ref={badgeValue}>0</span> km

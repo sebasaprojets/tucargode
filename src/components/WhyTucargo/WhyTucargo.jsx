@@ -19,7 +19,7 @@ export default function WhyTucargo() {
             const Icon = w.icon;
             return (
               <RevealItem key={w.title} className={`why__cell ${i === 0 ? 'why__cell--wide' : ''}`}>
-                <SpotlightCard className="why__card" tabIndex={0}>
+                <SpotlightCard className="why__card" tabIndex={0} tilt={5}>
                   <span className="why__icon" aria-hidden="true">
                     <Icon size={24} strokeWidth={1.6} />
                   </span>

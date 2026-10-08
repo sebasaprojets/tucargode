@@ -2,6 +2,7 @@ import { lazy, Suspense, useRef } from 'react';
 import { m, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight, Calculator, Plane, Ship, Truck, ArrowDown } from 'lucide-react';
 import Button from '../ui/Button';
+import Magnetic from '../ui/Magnetic';
 import SplitText from '../ui/SplitText';
 import Particles from '../ui/Particles';
 import { useIsMobile, useCanHover } from '../../hooks/useMediaQuery';
@@ -102,12 +103,16 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease, delay: 0.42 }}
           >
-            <Button href="#contacto" variant="accent" size="lg" iconRight={<ArrowRight size={18} />}>
-              Cotiza tu envío
-            </Button>
-            <Button href="#calculadora" variant="secondary" size="lg" iconLeft={<Calculator size={18} aria-hidden="true" />}>
-              Calcula tu envío
-            </Button>
+            <Magnetic>
+              <Button href="#contacto" variant="accent" size="lg" iconRight={<ArrowRight size={18} />}>
+                Cotiza tu envío
+              </Button>
+            </Magnetic>
+            <Magnetic>
+              <Button href="#calculadora" variant="secondary" size="lg" iconLeft={<Calculator size={18} aria-hidden="true" />}>
+                Calcula tu envío
+              </Button>
+            </Magnetic>
           </m.div>
 
           <m.ul

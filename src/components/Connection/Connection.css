@@ -1,81 +1,168 @@
 .connection {
-  background:
-    radial-gradient(60% 50% at 10% 100%, rgba(204, 77, 71, 0.07), transparent 70%),
-    linear-gradient(to bottom, var(--navy-950), var(--navy-900));
+  background: linear-gradient(to bottom, var(--navy-950), var(--navy-900));
+  padding-top: var(--space-section);
 }
-.chain {
+.connection__intro .section-header { margin-bottom: clamp(2rem, 1.5rem + 2vw, 3rem); }
+
+/* ---- Travesía guiada por scroll ---- */
+.voyage {
   position: relative;
-  display: grid;
-  gap: var(--space-xl);
-  margin: 0;
-  padding: 0 0 0 44px;
-  list-style: none;
+  height: 340vh; /* recorrido de scroll de la escena */
 }
-.chain__rail {
-  position: absolute;
-  left: 11px;
-  top: 6px;
-  bottom: 6px;
-  width: 2px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 2px;
+.voyage__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
   overflow: hidden;
+  isolation: isolate;
 }
-.chain__fill {
+.voyage__svg,
+.voyage__video {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, var(--blue-300), var(--blue-500) 60%, var(--color-accent));
-  transform-origin: top;
-  transform: scaleY(var(--p, 0));
+  width: 100%;
+  height: 100%;
+  display: block;
 }
-.chain__item { position: relative; opacity: 0.38; transition: opacity var(--transition-slow); }
-.chain__item.is-active { opacity: 1; }
-.chain__node {
+/* Degradado superior para legibilidad de los textos y fusión con la sección */
+.voyage__shade {
   position: absolute;
-  left: -44px;
-  top: 2px;
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--navy-900);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  transition: border-color var(--transition-slow), box-shadow var(--transition-slow);
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, var(--navy-900) 0%, rgba(4, 33, 58, 0) 14%),
+    linear-gradient(to top, rgba(2, 18, 31, 0.55) 0%, rgba(2, 18, 31, 0) 22%);
 }
-.chain__node span {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transition: background-color var(--transition-slow), transform var(--transition-slow);
-}
-.chain__item.is-active .chain__node { border-color: var(--blue-300); box-shadow: 0 0 0 6px rgba(1, 185, 255, 0.12); }
-.chain__item.is-active .chain__node span { background: var(--blue-300); transform: scale(1.1); }
-.chain__item.is-last.is-active .chain__node { border-color: var(--color-accent); box-shadow: 0 0 0 6px rgba(204, 77, 71, 0.15); }
-.chain__item.is-last.is-active .chain__node span { background: var(--color-accent); }
-.chain__index { font-family: var(--font-mono); font-size: 0.75rem; color: var(--blue-300); }
-.chain__label {
-  margin-top: 4px;
-  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
-  font-weight: 800;
-  letter-spacing: var(--tracking-tight);
-}
-.chain__item.is-last .chain__label { color: var(--white); }
-.chain__item.is-last.is-active .chain__label { background: linear-gradient(90deg, #fff, #E06B65); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.chain__text { margin-top: 6px; max-width: 320px; color: var(--fg-muted); font-size: var(--text-small); }
 
-@media (min-width: 1024px) {
-  .chain {
-    grid-template-columns: repeat(5, 1fr);
-    gap: var(--space-lg);
-    padding: 0;
-  }
-  .chain__rail { left: 12px; right: 12px; top: 11px; bottom: auto; width: auto; height: 2px; }
-  .chain__fill {
-    transform-origin: left;
-    transform: scaleX(var(--p, 0));
-    background: linear-gradient(to right, var(--blue-300), var(--blue-500) 60%, var(--color-accent));
-  }
-  .chain__node { position: relative; left: 0; top: 0; margin-bottom: 20px; }
+/* Movimientos lentos (solo transform: compositor) */
+.voyage__wave path { will-change: transform; }
+.voyage__wave--back path { animation: voy-wave 26s linear infinite; }
+.voyage__wave--mid path { animation: voy-wave 18s linear infinite reverse; }
+.voyage__wave--front path { animation: voy-wave 12s linear infinite; }
+@keyframes voy-wave {
+  to { transform: translateX(-1600px); }
 }
+.voyage__bob {
+  transform-box: fill-box;
+  transform-origin: 50% 80%;
+  animation: voy-bob 6.5s ease-in-out infinite;
+}
+@keyframes voy-bob {
+  0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+  50% { transform: translateY(-7px) rotate(1.4deg); }
+}
+.voyage__drift > g { animation: voy-drift 40s ease-in-out infinite alternate; }
+.voyage__drift--slow > g { animation-duration: 60s; }
+.voyage__drift > g:nth-child(2n) { animation-delay: -12s; }
+@keyframes voy-drift {
+  to { translate: -60px 6px; }
+}
+.voyage__sticky.is-paused * { animation-play-state: paused !important; }
+
+/* Textos */
+.voyage__captions {
+  position: absolute;
+  top: calc(var(--header-h) + clamp(16px, 4vh, 48px));
+  left: 0;
+  right: 0;
+  display: grid;
+  pointer-events: none;
+}
+.voyage__caption {
+  grid-area: 1 / 1;
+  max-width: 560px;
+  will-change: opacity, transform;
+}
+.voyage__caption .btn { pointer-events: auto; margin-top: var(--space-lg); }
+.voyage__index {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  opacity: 0.75;
+}
+.voyage__title {
+  margin-top: 6px;
+  font-size: clamp(2.5rem, 1.6rem + 4vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: inherit;
+}
+.voyage__text {
+  margin-top: 12px;
+  font-size: var(--text-body-lg);
+  max-width: 440px;
+  opacity: 0.85;
+}
+
+/* Raíl de progreso */
+.voyage__rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(18px, 4vh, 40px);
+  color: var(--white);
+}
+.voyage__rail-track {
+  position: relative;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.28);
+  overflow: hidden;
+}
+.voyage__rail-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--sea-400), #FFFFFF 60%, var(--hull-500));
+}
+.voyage__rail-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.voyage__rail-steps li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.55;
+  transition: opacity var(--transition-slow);
+  text-shadow: 0 1px 8px rgba(2, 18, 31, 0.6);
+}
+.voyage__rail-steps li span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.voyage__rail-steps li.is-done { opacity: 1; }
+.voyage__rail-steps li:last-child.is-done span { background: var(--hull-500); box-shadow: 0 0 0 4px rgba(204, 77, 71, 0.3); }
+
+@media (max-width: 767px) {
+  .voyage { height: 300vh; }
+  .voyage__rail { bottom: calc(96px + env(safe-area-inset-bottom)); }
+  .voyage__rail-steps { font-size: 0.5625rem; letter-spacing: 0.04em; }
+  .voyage__rail-steps li { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .voyage__title { font-size: clamp(2.25rem, 1.4rem + 5vw, 3rem); }
+}
+
+/* Sin movimiento: escena estática y lista de etapas */
+.voyage--static { height: auto; }
+.voyage--static .voyage__sticky { position: relative; height: 70vh; }
+.voyage__list.is-visible {
+  display: grid;
+  gap: 10px;
+  margin-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  list-style: none;
+  color: var(--fg-muted);
+}
+.voyage__list.is-visible strong { color: var(--white); }
