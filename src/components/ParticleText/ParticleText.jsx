@@ -59,8 +59,8 @@ export default function ParticleText({ targetRef, progress, wind = [1, -0.6], ga
       const hostTop = box.top - pad;
       const w = Math.ceil(box.width + pad * 2);
       const h = Math.ceil(box.height + pad * 2);
-      canvas.style.left = `${-pad}px`;
-      canvas.style.top = `${-pad}px`;
+      // Desplazado con transform (no cuenta como cambio de layout / CLS)
+      canvas.style.transform = `translate3d(${-pad}px, ${-pad}px, 0)`;
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);

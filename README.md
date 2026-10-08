@@ -66,6 +66,16 @@ Os dados vêm do conteúdo publicado em tucargo.de (início, «¿Quiénes somos?
 - Microinterações: botões magnéticos, cartões com inclinação 3D, faixa infinita que reage à velocidade do scroll, barra de progresso, rolagem suave (Lenis) no desktop, barra de ações fixa no celular.
 - Tudo respeita `prefers-reduced-motion` e pausa fora da tela.
 
+## Intro cinematográfica (splash)
+
+- Arquivos em `src/components/Intro/`. **Todos os ajustes** (duração de cada fase, cores, quantidade de partículas, câmera lenta, tilt, sacudida, aberração cromática, grão, som) ficam em `introConfig.js`.
+- Usa o mesmo logo do header (`siteConfig.brand.logo`); no final o logo voa até a posição exata dele no header (GSAP Flip).
+- Aparece só na primeira visita (`localStorage`, chave `tucargo:intro-v1`). Para rever: botão **Ver intro** no rodapé, ou abra o site com `?intro`. Links diretos a uma seção (`#calculadora`) pulam a intro.
+- Interação: tilt 3D com o mouse ou giroscópio, cursor com brilho e efeito magnético, partículas com repulsão, clique no logo = onda de choque, segurar = bullet time. `Esc` ou **Saltar intro** pulam.
+- Com «reduzir movimento» ativo, faz só um fundido do logo (no celular e tablet; no computador segue o mesmo critério do resto do site, ajustável em `respectReducedMotionOnDesktop`).
+- O som é gerado no navegador (Web Audio, sem arquivos) e começa desligado.
+- Se mudar `storageKey`, atualize também o script no `<head>` do `index.html`.
+
 ## Vídeos cinematográficos (Higgsfield)
 
 A seção da travessia aceita um vídeo no lugar da ilustração: preencha `siteConfig.media.voyage` (`mp4`, `webm`, `poster`, `mobileMp4`) com arquivos em `public/media/`. Recomendações: 1920×1080 (e 1080×1920 para celular), 8–15 s em loop, sem áudio, ≤ 4 MB, H.264.

@@ -13,6 +13,32 @@
     <link rel="canonical" href="https://www.tucargo.de/" />
     <meta name="robots" content="index, follow" />
 
+    <!-- Intro: si es la primera visita, se tapa la página hasta que la intro tome el control
+         (la clave debe coincidir con INTRO.storageKey en src/components/Intro/introConfig.js) -->
+    <script>
+      (function () {
+        try {
+          var force = /[?&]intro\b/.test(location.search);
+          if (force || (location.hash.length < 2 && localStorage.getItem('tucargo:intro-v1') !== '1')) {
+            var h = document.documentElement;
+            h.classList.add('intro-pending');
+            // el logo grande de la intro se pide cuanto antes
+            var l = document.createElement('link');
+            l.rel = 'preload'; l.as = 'image'; l.href = 'brand/tucargo-logo-512.webp';
+            document.head.appendChild(l);
+            // seguridad: si la intro no arranca, se muestra el sitio igualmente
+            setTimeout(function () {
+              if (!window.__tucargoIntro) h.classList.remove('intro-pending');
+            }, 6000);
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      html.intro-pending body { overflow: hidden; }
+      html.intro-pending body::after { content: ''; position: fixed; inset: 0; z-index: 2147483000; background: #01070D; }
+    </style>
+
     <link rel="preload" href="/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/brand/tucargo-logo-128.webp" as="image" type="image/webp" />

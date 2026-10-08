@@ -209,3 +209,6 @@ html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-stopped { overflow: hidden; }
+
+/* Intro: el logo del header se oculta hasta que el de la intro aterriza en su sitio */
+html.intro-active .header .logo__badge { visibility: hidden; }
