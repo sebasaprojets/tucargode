@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { Search, PackageCheck, Plane, FileCheck2, Truck, House, CircleAlert, MessageCircle } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import Reveal from '../ui/Reveal';
@@ -104,16 +104,16 @@ export default function Tracking() {
         <div className="tracking__result" aria-live="polite">
           <AnimatePresence mode="wait">
             {state.status === 'found' && (
-              <motion.div key="found" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <m.div key="found" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                 <p className="tracking__status">
                   Envío <strong>{state.code}</strong> · {TRACKING_STAGES[state.data.stageIndex].label}
                 </p>
                 <Timeline current={state.data.stageIndex} />
-              </motion.div>
+              </m.div>
             )}
 
             {(state.status === 'unavailable' || state.status === 'not_found' || state.status === 'error') && (
-              <motion.div key={state.status} className="tracking__notice" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <m.div key={state.status} className="tracking__notice" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                 <CircleAlert size={22} aria-hidden="true" />
                 <div>
                   <p className="tracking__notice-title">
@@ -128,7 +128,7 @@ export default function Tracking() {
                     Consultar por WhatsApp
                   </Button>
                 </div>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
 

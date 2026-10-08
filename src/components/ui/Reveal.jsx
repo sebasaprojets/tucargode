@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 
 const variants = {
   up: { hidden: { opacity: 0, y: 28 }, show: { opacity: 1, y: 0 } },
@@ -25,7 +25,7 @@ export default function Reveal({
   ...rest
 }) {
   const reduce = useReducedMotion();
-  const Comp = motion[as] ?? motion.div;
+  const Comp = m[as] ?? m.div;
   if (reduce) {
     const Static = as;
     return (
@@ -52,7 +52,7 @@ export default function Reveal({
 /** Contenedor con stagger para hijos <RevealItem>. */
 export function RevealGroup({ as = 'div', stagger = 0.08, delay = 0, amount = 0.15, className, children, ...rest }) {
   const reduce = useReducedMotion();
-  const Comp = motion[as] ?? motion.div;
+  const Comp = m[as] ?? m.div;
   return (
     <Comp
       className={className}
@@ -68,7 +68,7 @@ export function RevealGroup({ as = 'div', stagger = 0.08, delay = 0, amount = 0.
 }
 
 export function RevealItem({ as = 'div', variant = 'up', className, children, ...rest }) {
-  const Comp = motion[as] ?? motion.div;
+  const Comp = m[as] ?? m.div;
   return (
     <Comp
       className={className}

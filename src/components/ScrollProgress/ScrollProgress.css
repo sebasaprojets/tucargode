@@ -1,0 +1,11 @@
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: calc(var(--z-header) + 1);
+  height: 3px;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--sea-500), var(--sea-400) 70%, var(--hull-500));
+  pointer-events: none;
+}

@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 
 /**
  * Animación de texto palabra por palabra (patrón «Split Text» de React Bits).
@@ -28,14 +28,14 @@ export default function SplitText({ text, as = 'span', id, className, delay = 0,
 
   return (
     <Tag id={id} className={className} aria-label={text.replace(/\n/g, ' ')}>
-      <motion.span aria-hidden="true" style={{ display: 'block' }} {...trigger}>
+      <m.span aria-hidden="true" style={{ display: 'block' }} {...trigger}>
         {lines.map((line, li) => (
           <span key={li} className="split-line" style={{ display: 'block' }}>
             {line.split(' ').map((word, wi) => {
               const i = index++;
               return (
                 <span key={wi} style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'top', paddingBottom: '0.08em', marginBottom: '-0.08em' }}>
-                  <motion.span
+                  <m.span
                     style={{ display: 'inline-block', willChange: 'transform' }}
                     variants={{
                       hidden: { y: '105%', opacity: 0 },
@@ -44,14 +44,14 @@ export default function SplitText({ text, as = 'span', id, className, delay = 0,
                     transition={{ duration: 0.9, delay: delay + i * stagger, ease: [0.22, 1, 0.36, 1] }}
                   >
                     {word}
-                  </motion.span>
+                  </m.span>
                   {wi < line.split(' ').length - 1 ? ' ' : ''}
                 </span>
               );
             })}
           </span>
         ))}
-      </motion.span>
+      </m.span>
     </Tag>
   );
 }

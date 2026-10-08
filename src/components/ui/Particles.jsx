@@ -7,13 +7,18 @@ import { useReducedMotion } from 'framer-motion';
  * - Densidad adaptada al tamaño de pantalla y a dispositivos modestos.
  * - Con prefers-reduced-motion se dibuja un único frame estático.
  */
-export default function Particles({ className, density = 0.00009, color = '139,189,244', maxCount = 140 }) {
+export default function Particles({ className, density = 0.00009, color = '139,189,244', maxCount = 90 }) {
   const ref = useRef(null);
   const reduce = useReducedMotion();
 
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return undefined;
+    // Solo en dispositivos con puntero fino y CPU suficiente: en móvil no aportan y consumen batería
+    const capable =
+      window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1024px)').matches &&
+      (navigator.hardwareConcurrency || 8) > 4;
+    if (!capable) return undefined;
     const ctx = canvas.getContext('2d');
     const lowPower = (navigator.hardwareConcurrency || 8) <= 4;
     const dpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1 : 1.75);
@@ -94,7 +99,7 @@ export default function Particles({ className, density = 0.00009, color = '139,1
       cancelAnimationFrame(raf);
     };
 
-    const ro = new ResizeObserver(resize);
+    const ro = new ResizeObserver(() => w && resize());
     ro.observe(canvas);
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
@@ -111,9 +116,16 @@ export default function Particles({ className, density = 0.00009, color = '139,1
     };
     window.addEventListener('pointermove', onPointer, { passive: true });
 
-    resize();
-    start();
+    let idleId = 0;
+    const boot = () => {
+      resize();
+      start();
+    };
+    if ('requestIdleCallback' in window) idleId = window.requestIdleCallback(boot, { timeout: 2000 });
+    else idleId = setTimeout(boot, 600);
     return () => {
+      if ('cancelIdleCallback' in window) window.cancelIdleCallback(idleId);
+      clearTimeout(idleId);
       stop();
       ro.disconnect();
       io.disconnect();

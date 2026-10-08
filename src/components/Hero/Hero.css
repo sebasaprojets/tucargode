@@ -15,8 +15,7 @@
 .hero__aurora {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  will-change: transform;
+  /* El degradado radial ya es suave: sin filter: blur (muy costoso al animar) */
 }
 .hero__aurora--blue {
   top: -10%;
@@ -25,7 +24,7 @@
   height: 60vw;
   max-width: 900px;
   max-height: 900px;
-  background: radial-gradient(circle, rgba(1, 157, 216, 0.45), transparent 65%);
+  background: radial-gradient(circle, rgba(1, 157, 216, 0.4), rgba(1, 157, 216, 0.12) 40%, transparent 68%);
   animation: aurora 22s var(--ease-in-out) infinite alternate;
 }
 .hero__aurora--red {
@@ -33,7 +32,7 @@
   left: -15%;
   width: 45vw;
   height: 45vw;
-  background: radial-gradient(circle, rgba(204, 77, 71, 0.16), transparent 65%);
+  background: radial-gradient(circle, rgba(204, 77, 71, 0.14), rgba(204, 77, 71, 0.04) 40%, transparent 68%);
   animation: aurora 28s var(--ease-in-out) infinite alternate-reverse;
 }
 @keyframes aurora {
@@ -137,10 +136,8 @@
   width: 236px;
   padding: 16px 18px;
   border-radius: var(--radius-lg);
-  background: rgba(7, 48, 82, 0.72);
+  background: rgba(7, 48, 82, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
 }
 .hero__card-title {
@@ -196,4 +193,17 @@
 }
 @media (min-width: 1024px) and (max-height: 760px) {
   .hero__title { font-size: clamp(2.5rem, 1rem + 3.6vw, 4.25rem); }
+}
+
+/* Espacio reservado del globo mientras carga su chunk (evita saltos de layout) */
+.globe-fallback {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #0A4D78, #06304F 45%, #02121F 72%, transparent 73%);
+  opacity: 0.55;
+  transform: scale(0.82);
+}
+@media (max-width: 767px) {
+  .hero__aurora { animation: none; }
 }

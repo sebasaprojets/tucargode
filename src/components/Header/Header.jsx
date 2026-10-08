@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Logo from '../ui/Logo';
 import Button from '../ui/Button';
@@ -86,9 +86,10 @@ export default function Header() {
 
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             id="mobile-menu"
             className="mmenu theme-dark"
+            data-lenis-prevent
             role="dialog"
             aria-modal="true"
             aria-label="Menú"
@@ -99,14 +100,14 @@ export default function Header() {
           >
             <div className="mmenu__glow" aria-hidden="true" />
             <nav className="mmenu__nav container" aria-label="Menú móvil">
-              <motion.ul
+              <m.ul
                 role="list"
                 initial="hidden"
                 animate="show"
                 variants={{ show: { transition: { staggerChildren: 0.045, delayChildren: 0.2 } } }}
               >
                 {navItems.map((item, i) => (
-                  <motion.li
+                  <m.li
                     key={item.id}
                     variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } }}
                     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -120,11 +121,11 @@ export default function Header() {
                       {item.label}
                       <ArrowRight size={20} className="mmenu__arrow" aria-hidden="true" />
                     </a>
-                  </motion.li>
+                  </m.li>
                 ))}
-              </motion.ul>
+              </m.ul>
             </nav>
-            <motion.div
+            <m.div
               className="mmenu__footer container"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0, transition: { delay: 0.5 } }}
@@ -141,8 +142,8 @@ export default function Header() {
                   <InstagramIcon size={16} /> {siteConfig.social.instagram.handle}
                 </a>
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

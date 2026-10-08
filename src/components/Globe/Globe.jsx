@@ -33,11 +33,37 @@ const T_COUNT = 1500;
 const PLANE_PERIOD = 7000;
 
 const SHIP_PERIOD = 18000;
-const TEXTURES = {
-  day: `${import.meta.env.BASE_URL}globe/earth-day-2k.webp`,
-  night: `${import.meta.env.BASE_URL}globe/earth-night-2k.webp`,
+const textureSet = (res) => ({
+  day: `${import.meta.env.BASE_URL}globe/earth-day-${res}.webp`,
+  night: `${import.meta.env.BASE_URL}globe/earth-night-${res}.webp`,
   water: `${import.meta.env.BASE_URL}globe/earth-water-1k.webp`,
-};
+});
+
+/** Perfil del dispositivo para ajustar calidad y consumo. */
+function deviceProfile() {
+  const conn = navigator.connection || {};
+  const saveData = Boolean(conn.saveData) || /(^|-)(2g|3g)$/.test(conn.effectiveType || '');
+  const small = window.matchMedia('(max-width: 767px)').matches;
+  const lowPower = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+  return { saveData, small, lowPower };
+}
+
+const idle = (fn, timeout = 1500) =>
+  'requestIdleCallback' in window ? window.requestIdleCallback(fn, { timeout }) : setTimeout(fn, 200);
+
+/** Brillo suave pre-renderizado (sustituye a shadowBlur, que es caro por cuadro). */
+function makeGlowSprite() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const g = c.getContext('2d');
+  const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  grad.addColorStop(0, 'rgba(127,214,248,0.9)');
+  grad.addColorStop(0.35, 'rgba(1,185,255,0.35)');
+  grad.addColorStop(1, 'rgba(1,185,255,0)');
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 64, 64);
+  return c;
+}
 /** Ruta marítima aproximada: Rin → Róterdam → Canal de la Mancha → Atlántico → Puerto Cabello. */
 const SEA_WAYPOINTS = [
   [6.78, 51.22],
@@ -67,6 +93,9 @@ function buildScene() {
     dots[i * 3 + 2] = v[2];
     flags[i] = landDots[i * 3 + 2];
   }
+
+  const flagged = [];
+  for (let i = 0; i < n; i++) if (flags[i]) flagged.push(i);
 
   // Graticule cada 30°
   const grat = [];
@@ -108,7 +137,7 @@ function buildScene() {
   // Vista "home": desplazada al sureste del punto medio de la ruta para que el
   // arco no quede de frente (se ve curvado, con profundidad).
   const [midLon, midLat] = toLonLat(slerp(a, b, 0.5));
-  return { dots, flags, grat, arc, sea, a, b, home: { lon: midLon + 14, lat: midLat - 14 } };
+  return { dots, flags, flagged, grat, arc, sea, a, b, home: { lon: midLon + 14, lat: midLat - 14 } };
 }
 
 const project = (v, cam) => [
@@ -127,8 +156,9 @@ const hidden = (x, y, z) => z < 0 && x * x + y * y < 1;
  */
 export default function Globe() {
   const wrapRef = useRef(null);
-  const canvasRef = useRef(null);
-  const glRef = useRef(null);
+  const canvasRef = useRef(null); // capa dinámica: rutas, avión, barco, pulsos
+  const baseRef = useRef(null); // capa estática: esfera, puntos, atmósfera (solo se redibuja si cambia la cámara)
+  const glRef = useRef(null); // Tierra fotorrealista (WebGL)
   const labelFrom = useRef(null);
   const labelTo = useRef(null);
   const badge = useRef(null);
@@ -158,11 +188,27 @@ export default function Globe() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    const baseCanvas = baseRef.current;
     const wrap = wrapRef.current;
-    if (!canvas || !wrap) return undefined;
+    if (!canvas || !baseCanvas || !wrap) return undefined;
     const ctx = canvas.getContext('2d');
+    const bctx = baseCanvas.getContext('2d');
+    // En pantallas táctiles no hay parallax ni deriva: la Tierra queda quieta y no se redibuja
+    const hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    let lastKey = '';
     const v = view.current;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const profile = deviceProfile();
+    const maxDpr = Math.min(window.devicePixelRatio || 1, profile.small || profile.lowPower ? 1.5 : 2);
+    // Calidad adaptativa: si el dispositivo no sostiene ~45 fps, baja la resolución y luego a 30 fps
+    let quality = 1;
+    let dpr = maxDpr;
+    // En móvil la capa animada va a 30 fps (el avión sigue fluido y se ahorra batería)
+    let fps = profile.lowPower || profile.small ? 30 : 60;
+    let lastDraw = 0;
+    let prevNow = 0;
+    let dtSum = 0;
+    let dtN = 0;
+    const glow = makeGlowSprite();
     let W = 0;
     let H = 0;
     let raf = 0;
@@ -172,26 +218,43 @@ export default function Globe() {
     let lastCount = -1;
     let glFadeStart = null;
 
-    // Tierra fotorrealista (WebGL). Si no hay WebGL, queda el globo de puntos.
-    const earth = glRef.current ? createEarthRenderer(glRef.current, TEXTURES) : null;
-    earth?.ready
-      .then(() => {
-        glFadeStart = performance.now();
-        kick();
-      })
-      .catch(() => {});
+    // Tierra fotorrealista (WebGL). Si no hay WebGL o la conexión es lenta, queda el globo de puntos.
+    const earth =
+      glRef.current && !profile.saveData
+        ? createEarthRenderer(glRef.current, textureSet(profile.small || profile.lowPower ? '1k' : '2k'))
+        : null;
+    const textureTimer = setTimeout(
+      () =>
+        idle(() => {
+          earth
+            ?.load()
+            .then(() => {
+              if (glDisabled) return;
+              glFadeStart = performance.now();
+              kick();
+            })
+            .catch(() => {});
+        }),
+      reduce ? 0 : T_INTRO - 400,
+    );
 
     const resize = () => {
       const r = wrap.getBoundingClientRect();
       W = r.width;
       H = r.height;
-      canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-      canvas.style.width = `${W}px`;
-      canvas.style.height = `${H}px`;
+      for (const [c, cx2] of [
+        [canvas, ctx],
+        [baseCanvas, bctx],
+      ]) {
+        c.width = Math.round(W * dpr);
+        c.height = Math.round(H * dpr);
+        c.style.width = `${W}px`;
+        c.style.height = `${H}px`;
+        cx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
       wrap.dataset.compact = String(W < 520);
       earth?.resize(W, H, dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      lastKey = '';
       kick();
     };
 
@@ -202,8 +265,56 @@ export default function Globe() {
       el.style.opacity = show ? '1' : '0';
     };
 
+    const next = () => {
+      if (running && visible) raf = requestAnimationFrame(frame);
+      else running = false;
+    };
+
+    // Adaptación por etapas según el coste real (intervalo entre cuadros y trabajo de CPU):
+    // 1) baja resolución → 2) 30 fps → 3) sin WebGL (globo de puntos) → 4) menos puntos y 24 fps
+    let workSum = 0;
+    let glDisabled = false;
+    let dotStride = profile.lowPower ? 2 : 1;
+    const adapt = (now, work) => {
+      if (prevNow) {
+        dtSum += Math.min(100, now - prevNow);
+        workSum += work;
+        dtN += 1;
+      }
+      prevNow = now;
+      if (dtN < 30) return;
+      const avgDt = dtSum / dtN;
+      const avgWork = workSum / dtN;
+      dtSum = 0;
+      workSum = 0;
+      dtN = 0;
+      const budget = 1000 / fps;
+      if (avgDt > budget * 1.4 || avgWork > budget * 0.6) {
+        if (quality > 0.6) {
+          quality = Math.max(0.6, quality - 0.2);
+          dpr = Math.max(1, maxDpr * quality);
+          resize();
+        } else if (fps > 30) {
+          fps = 30;
+        } else if (!glDisabled && glFadeStart !== null) {
+          glDisabled = true;
+          glFadeStart = null;
+          earth?.clear();
+        } else if (dotStride < 3) {
+          dotStride += 1;
+          fps = 24;
+        }
+      }
+    };
+
     const frame = (now) => {
       if (start === null) start = now;
+      if (fps < 60 && now - lastDraw < 1000 / fps - 2) {
+        next();
+        return;
+      }
+      lastDraw = now;
+      const workStart = performance.now();
       const t = reduce ? 1e9 : now - start;
 
       // ---- Cámara ----
@@ -214,7 +325,7 @@ export default function Globe() {
         v.vLon *= 0.94;
         v.vLat *= 0.94;
         if (now - v.lastInteract > 2600) {
-          const drift = reduce ? 0 : Math.sin(now * 0.00011) * 6;
+          const drift = reduce || !hoverCapable ? 0 : Math.sin(now * 0.00011) * 6;
           v.lon += shortestDelta(v.lon, scene.home.lon + drift) * 0.022;
           v.lat += (scene.home.lat - v.lat) * 0.022;
         }
@@ -232,110 +343,128 @@ export default function Globe() {
       const cx = W / 2;
       const cy = H / 2;
       const alpha = clamp01(t / 900);
-      const glFade = earth?.usable && glFadeStart !== null ? (reduce ? 1 : easeInOutCubic(clamp01((now - glFadeStart) / 1100))) : 0;
+      const glFade = earth?.usable && !glDisabled && glFadeStart !== null ? (reduce ? 1 : easeInOutCubic(clamp01((now - glFadeStart) / 1100))) : 0;
       const dotsAlpha = 1 - glFade;
 
-      if (glFade > 0) {
-        // Sol a la izquierda de la cámara: América de día, Europa en el crepúsculo con sus luces
-        const sx = -0.86;
-        const sy = 0.3;
-        const sz = 0.41;
-        const sun = [0, 1, 2].map((k) => sx * cam.e[k] + sy * cam.n[k] + sz * cam.c[k]);
-        earth.render({ cx, cy, R, cam, sun, alpha, H, dpr });
-      }
-
-      ctx.clearRect(0, 0, W, H);
-      ctx.globalAlpha = alpha * dotsAlpha;
-
-      // ---- Atmósfera ----
-      let g = ctx.createRadialGradient(cx, cy, R * 0.92, cx, cy, R * 1.38);
-      g.addColorStop(0, 'rgba(1,185,255,0.32)');
-      g.addColorStop(0.35, 'rgba(1,185,255,0.1)');
-      g.addColorStop(1, 'rgba(1,185,255,0)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-
-      // ---- Esfera ----
-      g = ctx.createRadialGradient(cx - R * 0.38, cy - R * 0.45, R * 0.05, cx, cy, R * 1.05);
-      g.addColorStop(0, '#0A4D78');
-      g.addColorStop(0.45, '#06304F');
-      g.addColorStop(1, '#02121F');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.fill();
-
-      // ---- Graticule (se mantiene tenue sobre la Tierra real: estética HUD) ----
-      ctx.globalAlpha = alpha * (dotsAlpha + glFade * 0.6);
-      ctx.strokeStyle = 'rgba(127,214,248,0.07)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (const line of scene.grat) {
-        let pen = false;
-        for (const p of line) {
-          const [x, y, z] = project(p, cam);
-          if (z <= 0) {
-            pen = false;
-            continue;
-          }
-          const sx = cx + R * x;
-          const sy = cy - R * y;
-          if (pen) ctx.lineTo(sx, sy);
-          else ctx.moveTo(sx, sy);
-          pen = true;
+      // Capa estática: solo si cambió la cámara, el tamaño o un fundido
+      const key = `${lon0.toFixed(2)}|${lat0.toFixed(2)}|${R.toFixed(1)}|${alpha.toFixed(2)}|${glFade.toFixed(3)}|${dotStride}|${W}|${H}|${dpr}`;
+      if (key !== lastKey) {
+        lastKey = key;
+        if (glFade > 0) {
+          // Sol a la izquierda de la cámara: América de día, Europa en el crepúsculo con sus luces
+          const sx = -0.86;
+          const sy = 0.3;
+          const sz = 0.41;
+          const sun = [0, 1, 2].map((k) => sx * cam.e[k] + sy * cam.n[k] + sz * cam.c[k]);
+          earth.render({ cx, cy, R, cam, sun, alpha, H, dpr });
         }
-      }
-      ctx.stroke();
-      ctx.globalAlpha = alpha * dotsAlpha;
 
-      // ---- Puntos de tierra (agrupados por profundidad) ----
-      const buckets = [new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D()];
-      const de = new Path2D();
-      const ve = new Path2D();
-      const d = scene.dots;
-      const base = Math.max(0.7, R / 260);
-      for (let i = 0, n = scene.flags.length; i < n; i++) {
-        const x0 = d[i * 3];
-        const y0 = d[i * 3 + 1];
-        const z0 = d[i * 3 + 2];
-        const z = x0 * cam.c[0] + y0 * cam.c[1] + z0 * cam.c[2];
-        if (z <= 0.04) continue;
-        const sx = cx + R * (x0 * cam.e[0] + y0 * cam.e[1] + z0 * cam.e[2]);
-        const sy = cy - R * (x0 * cam.n[0] + y0 * cam.n[1] + z0 * cam.n[2]);
-        const f = scene.flags[i];
-        const r = base * (0.55 + 0.75 * z) * (f ? 1.25 : 1);
-        const path = f === 1 ? de : f === 2 ? ve : buckets[Math.min(4, (z * 5) | 0)];
-        path.moveTo(sx + r, sy);
-        path.arc(sx, sy, r, 0, Math.PI * 2);
-      }
-      for (let b = 0; b < 5; b++) {
-        ctx.fillStyle = `rgba(127,214,248,${0.16 + b * 0.15})`;
-        ctx.fill(buckets[b]);
-      }
-      // Alemania y Venezuela siguen destacadas sobre la Tierra real
-      ctx.globalAlpha = alpha * (dotsAlpha + glFade * 0.4);
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = 'rgba(255,255,255,0.8)';
-      ctx.fillStyle = '#ffffff';
-      ctx.fill(de);
-      ctx.shadowColor = 'rgba(224,107,101,0.9)';
-      ctx.fillStyle = '#E06B65';
-      ctx.fill(ve);
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = alpha * dotsAlpha;
+        bctx.clearRect(0, 0, W, H);
+        bctx.globalAlpha = alpha * dotsAlpha;
+        let g;
 
-      // ---- Sombreado de borde + luz de contorno ----
-      g = ctx.createRadialGradient(cx - R * 0.2, cy - R * 0.25, R * 0.5, cx, cy, R);
-      g.addColorStop(0, 'rgba(2,18,31,0)');
-      g.addColorStop(1, 'rgba(2,18,31,0.6)');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.fill();
+        if (dotsAlpha > 0) {
+        // ---- Atmósfera ----
+        g = bctx.createRadialGradient(cx, cy, R * 0.92, cx, cy, R * 1.38);
+        g.addColorStop(0, 'rgba(1,185,255,0.32)');
+        g.addColorStop(0.35, 'rgba(1,185,255,0.1)');
+        g.addColorStop(1, 'rgba(1,185,255,0)');
+        bctx.fillStyle = g;
+        bctx.fillRect(0, 0, W, H);
+
+        // ---- Esfera ----
+        g = bctx.createRadialGradient(cx - R * 0.38, cy - R * 0.45, R * 0.05, cx, cy, R * 1.05);
+        g.addColorStop(0, '#0A4D78');
+        g.addColorStop(0.45, '#06304F');
+        g.addColorStop(1, '#02121F');
+        bctx.fillStyle = g;
+        bctx.beginPath();
+        bctx.arc(cx, cy, R, 0, Math.PI * 2);
+        bctx.fill();
+        }
+
+        // ---- Graticule (se mantiene tenue sobre la Tierra real: estética HUD) ----
+        bctx.globalAlpha = alpha * (dotsAlpha + glFade * 0.6);
+        bctx.strokeStyle = 'rgba(127,214,248,0.07)';
+        bctx.lineWidth = 1;
+        bctx.beginPath();
+        for (const line of scene.grat) {
+          let pen = false;
+          for (const p of line) {
+            const [x, y, z] = project(p, cam);
+            if (z <= 0) {
+              pen = false;
+              continue;
+            }
+            const sx = cx + R * x;
+            const sy = cy - R * y;
+            if (pen) bctx.lineTo(sx, sy);
+            else bctx.moveTo(sx, sy);
+            pen = true;
+          }
+        }
+        bctx.stroke();
+        bctx.globalAlpha = alpha * dotsAlpha;
+
+        // ---- Puntos de tierra (agrupados por profundidad) ----
+        const buckets = [new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D()];
+        const de = new Path2D();
+        const ve = new Path2D();
+        const d = scene.dots;
+        const base = Math.max(0.7, R / 260);
+        // Con la Tierra real visible solo se dibujan los puntos de Alemania y Venezuela
+        const list = dotsAlpha > 0 ? null : scene.flagged;
+        const count0 = list ? list.length : scene.flags.length;
+        for (let j = 0; j < count0; j += list ? 1 : dotStride) {
+          const i = list ? list[j] : j;
+          const x0 = d[i * 3];
+          const y0 = d[i * 3 + 1];
+          const z0 = d[i * 3 + 2];
+          const z = x0 * cam.c[0] + y0 * cam.c[1] + z0 * cam.c[2];
+          if (z <= 0.04) continue;
+          const sx = cx + R * (x0 * cam.e[0] + y0 * cam.e[1] + z0 * cam.e[2]);
+          const sy = cy - R * (x0 * cam.n[0] + y0 * cam.n[1] + z0 * cam.n[2]);
+          const f = scene.flags[i];
+          const r = base * (0.55 + 0.75 * z) * (f ? 1.25 : 1);
+          const path = f === 1 ? de : f === 2 ? ve : buckets[Math.min(4, (z * 5) | 0)];
+          path.moveTo(sx + r, sy);
+          path.arc(sx, sy, r, 0, Math.PI * 2);
+        }
+        if (dotsAlpha > 0) {
+          for (let b = 0; b < 5; b++) {
+            bctx.fillStyle = `rgba(127,214,248,${0.16 + b * 0.15})`;
+            bctx.fill(buckets[b]);
+          }
+        }
+        // Alemania y Venezuela siguen destacadas sobre la Tierra real
+        bctx.globalAlpha = alpha * (dotsAlpha + glFade * 0.45);
+        bctx.fillStyle = '#ffffff';
+        bctx.fill(de);
+        bctx.fillStyle = '#E06B65';
+        bctx.fill(ve);
+
+        // ---- Sombreado de borde + luz de contorno ----
+        bctx.globalAlpha = alpha * dotsAlpha;
+        if (dotsAlpha > 0) {
+          g = bctx.createRadialGradient(cx - R * 0.2, cy - R * 0.25, R * 0.5, cx, cy, R);
+          g.addColorStop(0, 'rgba(2,18,31,0)');
+          g.addColorStop(1, 'rgba(2,18,31,0.6)');
+          bctx.fillStyle = g;
+          bctx.beginPath();
+          bctx.arc(cx, cy, R, 0, Math.PI * 2);
+          bctx.fill();
+        }
+        bctx.globalAlpha = alpha;
+        bctx.beginPath();
+        bctx.arc(cx, cy, R, 0, Math.PI * 2);
+        bctx.strokeStyle = 'rgba(127,214,248,0.35)';
+        bctx.lineWidth = 1.2;
+        bctx.stroke();
+      }
+
+      // Capa dinámica
+      ctx.clearRect(0, 0, W, H);
       ctx.globalAlpha = alpha;
-      ctx.strokeStyle = 'rgba(127,214,248,0.35)';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
 
       // ---- Ruta marítima (punteada) + barco ----
       const seaIn = reduce ? 1 : clamp01((t - T_ARC_START - T_ARC) / 900);
@@ -369,8 +498,7 @@ export default function Globe() {
         if (!shHid) {
           ctx.translate(shx, shy);
           ctx.rotate(Math.atan2(seaPts[si + 1][1] - shy, seaPts[si + 1][0] - shx));
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = 'rgba(127,214,248,1)';
+          ctx.drawImage(glow, -14, -14, 28, 28);
           ctx.fillStyle = '#ffffff';
           ctx.fill(SHIP, 'evenodd');
         }
@@ -456,9 +584,8 @@ export default function Globe() {
           ctx.save();
           ctx.translate(px, py);
           ctx.rotate(Math.atan2(ny - py, nx - px));
+          ctx.drawImage(glow, -18, -18, 36, 36);
           ctx.scale(1.15, 1.15);
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = 'rgba(127,214,248,1)';
           ctx.fillStyle = '#ffffff';
           ctx.fill(PLANE);
           ctx.restore();
@@ -491,8 +618,9 @@ export default function Globe() {
       const moving =
         v.dragging || Math.abs(v.vLon) > 0.01 || Math.abs(v.vLat) > 0.01 || Math.abs(v.hx - v.thx) > 0.001 || isAway ||
         Math.abs(shortestDelta(v.lon, scene.home.lon)) > 0.05;
-      if (running && visible && (!reduce || moving)) raf = requestAnimationFrame(frame);
-      else running = false;
+      if (reduce && !moving) running = false;
+      if (now - start > T_INTRO) adapt(now, performance.now() - workStart);
+      next();
     };
 
     function kick() {
@@ -525,6 +653,7 @@ export default function Globe() {
     return () => {
       running = false;
       cancelAnimationFrame(raf);
+      clearTimeout(textureTimer);
       earth?.destroy();
       ro.disconnect();
       io.disconnect();
@@ -622,6 +751,7 @@ export default function Globe() {
         onKeyDown={onKeyDown}
       >
         <canvas ref={glRef} className="globe__canvas" aria-hidden="true" />
+        <canvas ref={baseRef} className="globe__canvas" aria-hidden="true" />
         <canvas ref={canvasRef} className="globe__canvas" aria-hidden="true" />
 
         <div ref={labelFrom} className="globe__label globe__label--from" aria-hidden="true">

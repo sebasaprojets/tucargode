@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { Plane, Ship, Calculator, Scale, Box, ArrowRight, Info, TriangleAlert, Clock3 } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import Reveal from '../ui/Reveal';
@@ -88,12 +88,12 @@ export default function ShippingCalculator() {
             <fieldset className="calc__fieldset">
               <legend className="calc__legend">Tipo de envío</legend>
               <div className="segmented" role="radiogroup" aria-label="Tipo de envío">
-                {Object.values(shippingModes).map((m) => (
-                  <label key={m.id} className="segmented__option">
-                    <input type="radio" name="mode" value={m.id} checked={values.mode === m.id} onChange={set('mode')} />
+                {Object.values(shippingModes).map((opt) => (
+                  <label key={opt.id} className="segmented__option">
+                    <input type="radio" name="mode" value={opt.id} checked={values.mode === opt.id} onChange={set('mode')} />
                     <span className="segmented__label">
-                      {m.id === 'air' ? <Plane size={18} aria-hidden="true" /> : <Ship size={18} aria-hidden="true" />}
-                      {m.label}
+                      {opt.id === 'air' ? <Plane size={18} aria-hidden="true" /> : <Ship size={18} aria-hidden="true" />}
+                      {opt.label}
                     </span>
                   </label>
                 ))}
@@ -214,7 +214,7 @@ export default function ShippingCalculator() {
           <div className="calc__result theme-dark" aria-live="polite">
             <AnimatePresence mode="wait">
               {!result ? (
-                <motion.div
+                <m.div
                   key="empty"
                   className="calc__empty"
                   initial={{ opacity: 0 }}
@@ -232,9 +232,9 @@ export default function ShippingCalculator() {
                       ? 'Corrige los campos para ver el cálculo.'
                       : 'Indica el peso, las medidas y el destino, y pulsa «Calcular».'}
                   </p>
-                </motion.div>
+                </m.div>
               ) : (
-                <motion.div
+                <m.div
                   key="result"
                   className="calc__out"
                   initial={{ opacity: 0, y: 12 }}
@@ -344,7 +344,7 @@ export default function ShippingCalculator() {
                       Confirmar por WhatsApp
                     </Button>
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
             <p id="calc-disclaimer" className="calc__disclaimer">

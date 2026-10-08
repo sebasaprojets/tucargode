@@ -111,7 +111,7 @@ function loadImage(src) {
 }
 
 /**
- * @returns {null | { ready: Promise<void>, render(params): void, resize(w,h,dpr): void, destroy(): void }}
+ * @returns {null | { load(): Promise<void>, usable: boolean, render(params): void, resize(w,h,dpr): void, destroy(): void }}
  */
 export function createEarthRenderer(canvas, textures) {
   const gl =
@@ -163,7 +163,11 @@ export function createEarthRenderer(canvas, textures) {
 
   let loaded = false;
   let lost = false;
-  const ready = Promise.all([loadImage(textures.day), loadImage(textures.night), loadImage(textures.water)]).then(
+  let ready = null;
+  // Las texturas se descargan solo cuando se llama a load() (después de la intro)
+  const load = () => {
+    if (ready) return ready;
+    ready = Promise.all([loadImage(textures.day), loadImage(textures.night), loadImage(textures.water)]).then(
     ([day, night, water]) => {
       if (lost) throw new Error('context lost');
       makeTexture(day, 0);
@@ -175,6 +179,8 @@ export function createEarthRenderer(canvas, textures) {
       loaded = true;
     },
   );
+    return ready;
+  };
 
   const onLost = (e) => {
     e.preventDefault();
@@ -188,7 +194,7 @@ export function createEarthRenderer(canvas, textures) {
   gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
   return {
-    ready,
+    load,
     get usable() {
       return loaded && !lost;
     },
@@ -212,6 +218,11 @@ export function createEarthRenderer(canvas, textures) {
       gl.uniform3fv(u.uSun, sun);
       gl.uniform1f(u.uAlpha, alpha);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
+    },
+    clear() {
+      if (lost) return;
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
     },
     destroy() {
       canvas.removeEventListener('webglcontextlost', onLost);

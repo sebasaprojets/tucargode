@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { Send, CircleCheck, CircleAlert, RotateCcw } from 'lucide-react';
 import Field from '../ui/Field';
 import Button from '../ui/Button';
@@ -114,7 +114,7 @@ export default function QuoteForm() {
     <div className="quote theme-white">
       <AnimatePresence mode="wait" initial={false}>
         {status === 'success' ? (
-          <motion.div key="ok" className="quote__state" role="status" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
+          <m.div key="ok" className="quote__state" role="status" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
             <span className="quote__state-icon quote__state-icon--ok" aria-hidden="true">
               <CircleCheck size={36} />
             </span>
@@ -134,9 +134,9 @@ export default function QuoteForm() {
                 Nueva solicitud
               </Button>
             </div>
-          </motion.div>
+          </m.div>
         ) : (
-          <motion.form
+          <m.form
             key="form"
             ref={formRef}
             className="quote__form"
@@ -212,7 +212,7 @@ export default function QuoteForm() {
                 ? 'Al enviar se abrirá WhatsApp con tu solicitud redactada. Tus datos solo se usan para responder a tu consulta.'
                 : 'Tus datos solo se usan para responder a tu consulta.'}
             </p>
-          </motion.form>
+          </m.form>
         )}
       </AnimatePresence>
     </div>

@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
+import { setScrollLocked } from '../lib/scroll';
 
 export function useBodyLock(locked) {
   useEffect(() => {
     if (!locked) return undefined;
-    document.body.classList.add('is-locked');
-    return () => document.body.classList.remove('is-locked');
+    setScrollLocked(true);
+    return () => setScrollLocked(false);
   }, [locked]);
 }

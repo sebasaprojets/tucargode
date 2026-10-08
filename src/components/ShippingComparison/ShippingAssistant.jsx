@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { ArrowLeft, Calculator, Plane, Ship, MessageCircle, RotateCcw } from 'lucide-react';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
@@ -47,7 +47,7 @@ export default function ShippingAssistant({ open, onClose }) {
         </p>
         <AnimatePresence mode="wait" initial={false}>
           {step === 0 && (
-            <motion.fieldset key="w" className="assistant__step" {...slide}>
+            <m.fieldset key="w" className="assistant__step" {...slide}>
               <legend>¿Cuánto pesa tu envío aproximadamente?</legend>
               <div className="assistant__options">
                 {weightOptions.map((o) => (
@@ -56,10 +56,10 @@ export default function ShippingAssistant({ open, onClose }) {
                   </button>
                 ))}
               </div>
-            </motion.fieldset>
+            </m.fieldset>
           )}
           {step === 1 && (
-            <motion.fieldset key="u" className="assistant__step" {...slide}>
+            <m.fieldset key="u" className="assistant__step" {...slide}>
               <legend>¿Qué tan urgente es?</legend>
               <div className="assistant__options assistant__options--col">
                 {urgencyOptions.map((o) => (
@@ -72,10 +72,10 @@ export default function ShippingAssistant({ open, onClose }) {
               <button type="button" className="assistant__back" onClick={() => setWeight(null)}>
                 <ArrowLeft size={16} aria-hidden="true" /> Volver
               </button>
-            </motion.fieldset>
+            </m.fieldset>
           )}
           {step === 2 && result && (
-            <motion.div key="r" className="assistant__step" {...slide} aria-live="polite">
+            <m.div key="r" className="assistant__step" {...slide} aria-live="polite">
               <div className={`assistant__result assistant__result--${result.mode}`}>
                 <span className="assistant__result-icon" aria-hidden="true">
                   {result.mode === 'sea' ? <Ship size={28} /> : result.mode === 'contact' ? <MessageCircle size={28} /> : <Plane size={28} />}
@@ -106,7 +106,7 @@ export default function ShippingAssistant({ open, onClose }) {
                   Empezar de nuevo
                 </Button>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>

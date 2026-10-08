@@ -1,12 +1,5 @@
 import { lazy, Suspense, useRef } from 'react';
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from 'framer-motion';
+import { m, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight, Calculator, Plane, Ship, Truck, ArrowDown } from 'lucide-react';
 import Button from '../ui/Button';
 import SplitText from '../ui/SplitText';
@@ -61,28 +54,28 @@ export default function Hero() {
       onPointerMove={onPointerMove}
     >
       {/* BACKGROUND — cielo, horizonte, atmósfera */}
-      <motion.div className="hero__bg" style={{ x: bgX, y: bgY }} aria-hidden="true">
-        <motion.div className="hero__bg-inner" style={{ y: bgYm }}>
+      <m.div className="hero__bg" style={{ x: bgX, y: bgY }} aria-hidden="true">
+        <m.div className="hero__bg-inner" style={{ y: bgYm }}>
           <div className="hero__aurora hero__aurora--blue" />
           <div className="hero__aurora hero__aurora--red" />
           <div className="hero__grid" />
           <div className="hero__horizon" />
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
       <Particles className="hero__particles" />
 
       <div className="hero__layout container">
         {/* FOREGROUND — mensaje y CTA */}
-        <motion.div className="hero__content" style={{ y: contentY, opacity: contentOpacity }}>
-          <motion.p
+        <m.div className="hero__content" style={{ y: contentY, opacity: contentOpacity }}>
+          <m.p
             className="hero__eyebrow"
             initial={reduce ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease, delay: 0.1 }}
+            transition={{ duration: 0.7, ease, delay: 0.05 }}
           >
             <span className="hero__live" aria-hidden="true" />
             Alemania <ArrowRight size={14} aria-hidden="true" /> Venezuela · desde {siteConfig.foundedYear}
-          </motion.p>
+          </m.p>
 
           <SplitText
             as="h1"
@@ -90,24 +83,24 @@ export default function Hero() {
             className="hero__title"
             text={'De Alemania a Venezuela.\nTu carga, en buenas manos.'}
             animateOnMount
-            delay={0.2}
-            stagger={0.06}
+            delay={0.08}
+            stagger={0.045}
           />
 
-          <motion.p
+          <m.p
             className="hero__lead"
             initial={reduce ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease, delay: 0.75 }}
+            transition={{ duration: 0.7, ease, delay: 0.3 }}
           >
             Envíos aéreos y marítimos puerta a puerta, con atención personalizada durante todo el proceso.
-          </motion.p>
+          </m.p>
 
-          <motion.div
+          <m.div
             className="hero__ctas"
             initial={reduce ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease, delay: 0.9 }}
+            transition={{ duration: 0.7, ease, delay: 0.42 }}
           >
             <Button href="#contacto" variant="accent" size="lg" iconRight={<ArrowRight size={18} />}>
               Cotiza tu envío
@@ -115,14 +108,14 @@ export default function Hero() {
             <Button href="#calculadora" variant="secondary" size="lg" iconLeft={<Calculator size={18} aria-hidden="true" />}>
               Calcula tu envío
             </Button>
-          </motion.div>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             className="hero__facts"
             role="list"
             initial={reduce ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1.15 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
           >
             <li>
               <Plane size={16} aria-hidden="true" /> Aéreo desde {air.minBillableKg} kg
@@ -133,11 +126,11 @@ export default function Hero() {
             <li>
               <Truck size={16} aria-hidden="true" /> Recogida DHL en Alemania
             </li>
-          </motion.ul>
-        </motion.div>
+          </m.ul>
+        </m.div>
 
         {/* MIDDLE-GROUND — el mundo */}
-        <motion.div
+        <m.div
           className="hero__scene"
           style={isMobile ? undefined : { scale: sceneScale }}
           initial={reduce ? false : { opacity: 0 }}
@@ -149,7 +142,7 @@ export default function Hero() {
           </Suspense>
 
           {!isMobile && (
-            <motion.div
+            <m.div
               className="hero__card"
               style={{ x: fgX, y: fgY }}
               initial={reduce ? false : { opacity: 0, y: 24 }}
@@ -174,9 +167,9 @@ export default function Hero() {
                 </div>
               </dl>
               <p className="hero__card-note">Ciudades principales · desde la salida</p>
-            </motion.div>
+            </m.div>
           )}
-        </motion.div>
+        </m.div>
       </div>
 
       <a href="#conexion" className="hero__scroll" aria-label="Seguir bajando">

@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { m, useReducedMotion } from 'framer-motion';
 import { Plane, Ship } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import Reveal from '../ui/Reveal';
@@ -46,8 +46,18 @@ export default function RouteMap() {
   const reduce = useReducedMotion();
   const isMobile = useIsMobile();
   const route = routes[active];
-  const viewBox = isMobile ? `220 20 900 560` : `0 0 ${WIDTH} ${HEIGHT}`;
+  const viewBox = isMobile ? `170 30 1000 622` : `0 0 ${WIDTH} ${HEIGHT}`;
   const cities = destinations.filter((d) => d.coords && d.available);
+  const fgRef = useRef(null);
+
+  // Pausa las animaciones SVG (SMIL) cuando el mapa no está en pantalla
+  useEffect(() => {
+    const svg = fgRef.current;
+    if (!svg?.pauseAnimations) return undefined;
+    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? svg.unpauseAnimations() : svg.pauseAnimations()));
+    io.observe(svg);
+    return () => io.disconnect();
+  }, []);
 
   return (
     <section className="routemap section theme-dark" aria-labelledby="map-title">
@@ -79,8 +89,21 @@ export default function RouteMap() {
         </div>
 
         <Reveal variant="clip" className="routemap__frame" id="routemap-panel" role="tabpanel">
+          <div className="routemap__stage">
+          {/* Capa estática: miles de puntos, nunca se repinta durante la animación */}
+          <svg className="routemap__svg routemap__svg--bg" viewBox={viewBox} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs>
+              <radialGradient id="mapVignette" cx="50%" cy="50%" r="70%">
+                <stop offset="60%" stopColor="#04213A" stopOpacity="0" />
+                <stop offset="100%" stopColor="#04213A" stopOpacity="0.9" />
+              </radialGradient>
+            </defs>
+            <path d={dots} className="routemap__dots" />
+            <rect x="0" y="0" width={WIDTH} height={HEIGHT} fill="url(#mapVignette)" />
+          </svg>
           <svg
-            className={`routemap__svg ${hover ? 'is-hover' : ''}`}
+            ref={fgRef}
+            className={`routemap__svg routemap__svg--fg ${hover ? 'is-hover' : ''}`}
             viewBox={viewBox}
             preserveAspectRatio="xMidYMid meet"
             role="img"
@@ -91,14 +114,7 @@ export default function RouteMap() {
                 <stop offset="0%" stopColor="#7FD6F8" />
                 <stop offset="100%" stopColor="#CC4D47" />
               </linearGradient>
-              <radialGradient id="mapVignette" cx="50%" cy="50%" r="70%">
-                <stop offset="60%" stopColor="#04213A" stopOpacity="0" />
-                <stop offset="100%" stopColor="#04213A" stopOpacity="0.9" />
-              </radialGradient>
             </defs>
-
-            <path d={dots} className="routemap__dots" />
-            <rect x="0" y="0" width={WIDTH} height={HEIGHT} fill="url(#mapVignette)" pointerEvents="none" />
 
             {/* Ruta inactiva (contexto) */}
             {Object.values(routes)
@@ -108,7 +124,7 @@ export default function RouteMap() {
               ))}
 
             {/* Ruta activa */}
-            <motion.path
+            <m.path
               key={route.id}
               d={route.d}
               className={`routemap__route routemap__route--${route.id}`}
@@ -159,6 +175,7 @@ export default function RouteMap() {
               </text>
             ))}
           </svg>
+          </div>
 
           <div className={`routemap__info ${hover ? 'is-hover' : ''}`}>
             <p className="routemap__info-mode">

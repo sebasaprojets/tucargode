@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { PackageOpen, Send, Plane, House } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import { RevealGroup, RevealItem } from '../ui/Reveal';
@@ -25,7 +25,7 @@ export default function HowItWorks() {
         />
         <div className="how__wrap" ref={ref}>
           <span className="how__rail" aria-hidden="true">
-            <motion.span className="how__fill" style={{ '--p': p }} />
+            <m.span className="how__fill" style={{ '--p': p }} />
           </span>
           <RevealGroup as="ol" className="how__steps" role="list" stagger={0.12}>
             {howItWorks.map((s, i) => {

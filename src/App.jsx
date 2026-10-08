@@ -1,10 +1,14 @@
-import { lazy, Suspense } from 'react';
-import { MotionConfig } from 'framer-motion';
+import { lazy, useEffect } from 'react';
+import { LazyMotion, MotionConfig, domAnimation } from 'framer-motion';
 import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
 import Connection from './components/Connection/Connection';
 import Stats from './components/Stats/Stats';
 import WhatsAppButton from './components/WhatsAppButton/WhatsAppButton';
+import DeferredSection from './components/ui/DeferredSection';
+import ScrollProgress from './components/ScrollProgress/ScrollProgress';
+import MobileActionBar from './components/MobileActionBar/MobileActionBar';
+import { initAnchorNavigation, initSmoothScroll } from './lib/scroll';
 
 // Code splitting: todo lo que está bajo el primer pliegue se carga en chunks aparte.
 const Services = lazy(() => import('./components/Services/Services'));
@@ -22,21 +26,20 @@ const FAQ = lazy(() => import('./components/FAQ/FAQ'));
 const Instagram = lazy(() => import('./components/Instagram/Instagram'));
 const Footer = lazy(() => import('./components/Footer/Footer'));
 
-/** Ancla estable para la navegación aunque la sección todavía se esté cargando. */
-function Anchor({ id, children, minHeight = '60vh' }) {
-  return (
-    <div id={id} className="anchor">
-      <Suspense fallback={<div style={{ minHeight }} aria-busy="true" />}>{children}</Suspense>
-    </div>
-  );
-}
-
 export default function App() {
+  useEffect(() => {
+    const off = initAnchorNavigation();
+    initSmoothScroll();
+    return off;
+  }, []);
+
   return (
+    <LazyMotion features={domAnimation} strict>
     <MotionConfig reducedMotion="user">
       <a href="#main" className="skip-link">
         Saltar al contenido
       </a>
+      <ScrollProgress />
       <Header />
       <main id="main">
         <div id="inicio">
@@ -46,46 +49,48 @@ export default function App() {
           <Connection />
           <Stats />
         </div>
-        <Anchor id="servicios">
+        <DeferredSection id="servicios">
           <Services />
-        </Anchor>
-        <Anchor id="envios">
+        </DeferredSection>
+        <DeferredSection id="envios">
           <ShippingComparison />
-        </Anchor>
-        <Anchor id="tarifas">
+        </DeferredSection>
+        <DeferredSection id="tarifas">
           <Rates />
-        </Anchor>
-        <Anchor id="calculadora">
+        </DeferredSection>
+        <DeferredSection id="calculadora">
           <ShippingCalculator />
-        </Anchor>
-        <Anchor id="como-funciona">
+        </DeferredSection>
+        <DeferredSection id="como-funciona">
           <HowItWorks />
-        </Anchor>
-        <Anchor id="seguimiento">
+        </DeferredSection>
+        <DeferredSection id="seguimiento">
           <Tracking />
-        </Anchor>
-        <Anchor id="ruta">
+        </DeferredSection>
+        <DeferredSection id="ruta">
           <RouteMap />
-        </Anchor>
-        <Anchor id="nosotros">
+        </DeferredSection>
+        <DeferredSection id="nosotros">
           <About />
           <WhyTucargo />
           <Testimonials />
-        </Anchor>
-        <Anchor id="contacto">
+        </DeferredSection>
+        <DeferredSection id="contacto">
           <Contact />
-        </Anchor>
-        <Anchor id="faq">
+        </DeferredSection>
+        <DeferredSection id="faq">
           <FAQ />
-        </Anchor>
-        <Anchor id="instagram" minHeight="40vh">
+        </DeferredSection>
+        <DeferredSection id="instagram" minHeight="40vh">
           <Instagram />
-        </Anchor>
+        </DeferredSection>
       </main>
-      <Suspense fallback={null}>
+      <DeferredSection minHeight="40vh">
         <Footer />
-      </Suspense>
+      </DeferredSection>
       <WhatsAppButton />
+      <MobileActionBar />
     </MotionConfig>
+    </LazyMotion>
   );
 }

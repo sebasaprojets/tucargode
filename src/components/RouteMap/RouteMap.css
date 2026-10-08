@@ -33,8 +33,11 @@
   overflow: hidden;
 }
 .routemap__svg { width: 100%; height: auto; aspect-ratio: 120 / 74; }
+.routemap__stage { position: relative; }
+.routemap__svg--bg { display: block; }
+.routemap__svg--fg { position: absolute; inset: 0; height: 100%; }
 @media (max-width: 767px) {
-  .routemap__svg { aspect-ratio: 900 / 560; }
+  .routemap__svg { aspect-ratio: 1000 / 622; }
 }
 .routemap__dots {
   fill: none;

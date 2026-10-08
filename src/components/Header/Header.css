@@ -9,8 +9,7 @@
   transition:
     background-color var(--transition-slow),
     border-color var(--transition-slow),
-    box-shadow var(--transition-slow),
-    backdrop-filter var(--transition-slow);
+    box-shadow var(--transition-slow);
 }
 .header.is-scrolled {
   background: rgba(4, 33, 58, 0.72);
@@ -18,6 +17,14 @@
   -webkit-backdrop-filter: blur(16px) saturate(160%);
   border-bottom-color: rgba(255, 255, 255, 0.08);
   box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.45);
+}
+/* En móvil el desenfoque al hacer scroll cuesta mucho: fondo casi opaco */
+@media (max-width: 767px), (pointer: coarse) {
+  .header.is-scrolled {
+    background: rgba(4, 33, 58, 0.96);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 .header.is-open { z-index: calc(var(--z-menu) + 1); background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; border-bottom-color: transparent; }
 

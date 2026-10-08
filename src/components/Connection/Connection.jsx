@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { m, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import SectionHeader from '../ui/SectionHeader';
 import { connectionStory } from '../../data/content';
 import './Connection.css';
@@ -29,7 +29,7 @@ export default function Connection() {
         />
         <ol className="chain" role="list">
           <span className="chain__rail" aria-hidden="true">
-            <motion.span className="chain__fill" style={{ '--p': fill }} />
+            <m.span className="chain__fill" style={{ '--p': fill }} />
           </span>
           {connectionStory.map((s, i) => (
             <li key={s.label} className={`chain__item ${i <= step ? 'is-active' : ''} ${i === connectionStory.length - 1 ? 'is-last' : ''}`}>

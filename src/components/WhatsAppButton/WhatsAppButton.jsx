@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { WhatsAppIcon } from '../ui/BrandIcons';
 import { whatsappLink } from '../../config/siteConfig';
 import './WhatsAppButton.css';
@@ -43,7 +43,7 @@ export default function WhatsAppButton() {
   return (
     <AnimatePresence>
       {visible && (
-        <motion.div
+        <m.div
           className="wa-float"
           initial={{ opacity: 0, scale: 0.6, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -52,7 +52,7 @@ export default function WhatsAppButton() {
         >
           <AnimatePresence>
             {hint && (
-              <motion.p
+              <m.p
                 className="wa-float__hint"
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -60,7 +60,7 @@ export default function WhatsAppButton() {
                 role="status"
               >
                 ¿Dudas con tu envío? Escríbenos.
-              </motion.p>
+              </m.p>
             )}
           </AnimatePresence>
           <a
@@ -74,7 +74,7 @@ export default function WhatsAppButton() {
             <WhatsAppIcon size={28} />
             <span className="wa-float__ring" aria-hidden="true" />
           </a>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useBodyLock } from '../../hooks/useBodyLock';
 import './Modal.css';
@@ -45,7 +45,7 @@ export default function Modal({ open, onClose, title, labelledBy = 'modal-title'
   return createPortal(
     <AnimatePresence>
       {open && (
-        <motion.div
+        <m.div
           className="modal"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -53,9 +53,10 @@ export default function Modal({ open, onClose, title, labelledBy = 'modal-title'
           transition={{ duration: 0.25 }}
         >
           <div className="modal__backdrop" onClick={onClose} aria-hidden="true" />
-          <motion.div
+          <m.div
             ref={panelRef}
             className="modal__panel theme-white"
+            data-lenis-prevent
             role="dialog"
             aria-modal="true"
             aria-labelledby={labelledBy}
@@ -73,8 +74,8 @@ export default function Modal({ open, onClose, title, labelledBy = 'modal-title'
               </button>
             </div>
             <div className="modal__body">{children}</div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>,
     document.body,

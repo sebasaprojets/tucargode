@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import { testimonials } from '../../data/content';
@@ -29,7 +29,7 @@ export default function Testimonials() {
         <SectionHeader id="testimonials-title" eyebrow="Testimonios" title="Lo que dicen nuestros clientes" />
         <div className="testimonials__track" aria-live="polite">
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div
+            <m.div
               key={`${page}-${perView}`}
               className="testimonials__page"
               style={{ '--cols': perView }}
@@ -49,7 +49,7 @@ export default function Testimonials() {
                   </figcaption>
                 </figure>
               ))}
-            </motion.div>
+            </m.div>
           </AnimatePresence>
         </div>
         {pages > 1 && (

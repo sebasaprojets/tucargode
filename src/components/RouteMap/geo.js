@@ -42,16 +42,39 @@ function inside([x, y], poly) {
   return hit;
 }
 
-/** Genera un único `d` de path con todos los puntos de tierra (un solo nodo SVG). */
+// Rectángulos envolventes: cada punto solo se prueba contra los polígonos cercanos
+const BOXES = LAND.map((poly) => {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const [x, y] of poly) {
+    if (x < minX) minX = x;
+    if (y < minY) minY = y;
+    if (x > maxX) maxX = x;
+    if (y > maxY) maxY = y;
+  }
+  return { poly, minX, minY, maxX, maxY };
+});
+
+let cache = null;
+
+/** Genera (una sola vez) un único `d` de path con todos los puntos de tierra. */
 export function buildDotsPath(step = 1.25) {
+  if (cache) return cache;
   let d = '';
   for (let lat = BOUNDS.latMax - step / 2; lat > BOUNDS.latMin; lat -= step) {
     for (let lon = BOUNDS.lonMin + step / 2; lon < BOUNDS.lonMax; lon += step) {
-      if (LAND.some((p) => inside([lon, lat], p))) {
+      if (
+        BOXES.some(
+          (b) => lon >= b.minX && lon <= b.maxX && lat >= b.minY && lat <= b.maxY && inside([lon, lat], b.poly),
+        )
+      ) {
         const [x, y] = project([lon, lat]);
         d += `M${x.toFixed(1)} ${y.toFixed(1)}h0`;
       }
     }
   }
+  cache = d;
   return d;
 }

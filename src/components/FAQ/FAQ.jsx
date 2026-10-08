@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { Plus, ExternalLink, MessageCircle } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import Button from '../ui/Button';
@@ -22,7 +22,7 @@ function Item({ item, open, onToggle }) {
       </h3>
       <AnimatePresence initial={false}>
         {open && (
-          <motion.div
+          <m.div
             id={`${id}-a`}
             role="region"
             aria-labelledby={`${id}-q`}
@@ -40,7 +40,7 @@ function Item({ item, open, onToggle }) {
                 </a>
               )}
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

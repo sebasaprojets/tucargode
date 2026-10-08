@@ -35,10 +35,8 @@
   gap: 8px;
   padding: 6px 12px;
   border-radius: var(--radius-full);
-  background: rgba(4, 33, 58, 0.78);
+  background: rgba(4, 33, 58, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 0.8125rem;
@@ -135,14 +133,6 @@
 .globe__recenter.is-visible { opacity: 1; transform: none; pointer-events: auto; }
 .globe__recenter:hover { background: var(--color-primary); }
 
-.globe-fallback {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 32%, #0A4D78, #06304F 45%, #02121F 75%, transparent 76%);
-  opacity: 0.5;
-  transform: scale(0.82);
-}
 
 @media (prefers-reduced-motion: reduce) {
   .globe__hint { animation: none; opacity: 1; }
