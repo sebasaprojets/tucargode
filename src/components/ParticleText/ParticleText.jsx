@@ -3,14 +3,17 @@ import { useMotionValueEvent } from 'framer-motion';
 import { useReduceMotion } from '../../hooks/useMotionPreference';
 import './ParticleText.css';
 
-// Reparto del progreso: el frente recorre las letras en SWEEP; cada letra tarda DURATION en deshacerse
-const SWEEP = 0.6;
-const DURATION = 0.32;
-const LETTER_FADE = 0.3; // fracción de DURATION en la que la letra HTML se apaga
-const JITTER = 0.05; // retraso aleatorio de cada partícula dentro de su letra
+// El scroll decide QUÉ letras están deshechas; la animación de cada letra corre en el
+// tiempo (no depende de la velocidad de la rueda), así siempre es fluida.
+const SWEEP = 0.9; // tramo del progreso que recorre el frente de letras
+const OUT_MS = 1500; // una letra se deshace en partículas
+const IN_MS = 1100; // una letra se vuelve a formar
+const LETTER_FADE = 0.22; // fracción inicial en la que la letra HTML se apaga
+const JITTER = 0.18; // desfase de cada partícula dentro de su letra
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const smooth = (t) => t * t * (3 - 2 * t);
+const easeOut = (t) => 1 - (1 - t) ** 3;
 
 /** Texto partido en letras (`.ch`) para que ParticleText pueda deshacerlas una a una. */
 export function Chars({ text }) {
@@ -29,13 +32,14 @@ export function Chars({ text }) {
  * (MotionValue 0→1) controla el efecto:
  *   0 = texto HTML entero (nítido y accesible)
  *   1 = todas las letras convertidas en partículas y dispersas por el «viento».
- * Las letras se van apagando de derecha a izquierda y cada una estalla en sus
- * propias partículas; con el progreso invertido se forman de izquierda a derecha.
- * Solo dibuja cuando cambia el progreso y solo las letras en transición.
+ * Al pasar el frente, cada letra se apaga y sus partículas se dispersan con una
+ * animación propia en el tiempo (fluida aunque el scroll se detenga); al volver,
+ * las partículas regresan y la letra se forma de nuevo. Solo hay bucle de dibujo
+ * mientras alguna letra está en transición.
  */
-export default function ParticleText({ targetRef, progress, wind = [1, -0.6], gap, colors, threshold = 0.01, pad = 260 }) {
+export default function ParticleText({ targetRef, progress, wind = [1, -0.6], gap, colors, pad = 260 }) {
   const canvasRef = useRef(null);
-  const state = useRef({ letters: null, w: 0, h: 0, last: -1, drawn: false });
+  const state = useRef({ letters: null, raf: 0 });
   const reduce = useReduceMotion();
 
   useEffect(() => {
@@ -65,7 +69,7 @@ export default function ParticleText({ targetRef, progress, wind = [1, -0.6], ga
       const ctx = canvas.getContext('2d');
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const step = gap ?? (window.innerWidth < 768 ? 3 : 2.5);
+      const step = gap ?? 3;
       const off = document.createElement('canvas');
       off.width = w;
       off.height = h;
@@ -103,15 +107,16 @@ export default function ParticleText({ targetRef, progress, wind = [1, -0.6], ga
               parts.push({
                 x: bx + x,
                 y: by + y,
-                dx: (wind[0] + (Math.random() - 0.5) * 1.4) * (90 + seed * 220),
-                dy: (wind[1] + (Math.random() - 0.5) * 1.4) * (90 + seed * 220),
+                dx: (wind[0] + (Math.random() - 0.5) * 1.4) * (70 + seed * 170),
+                dy: (wind[1] + (Math.random() - 0.5) * 1.4) * (70 + seed * 170),
                 j: Math.random() * JITTER,
+                ph: Math.random() * Math.PI * 2,
                 s: step * (0.6 + Math.random() * 0.5),
               });
             }
           }
         }
-        letters.push({ el, x: lx + r.width / 2, color, parts, opacity: -1 });
+        letters.push({ el, x: lx + r.width / 2, color, parts, a: 0, target: 0, opacity: -1 });
       }
       // Orden del barrido: de derecha a izquierda (las dos líneas a la vez)
       let minX = Infinity;
@@ -121,12 +126,14 @@ export default function ParticleText({ targetRef, progress, wind = [1, -0.6], ga
         maxX = Math.max(maxX, l.x);
       }
       const span = Math.max(1, maxX - minX);
-      for (const l of letters) l.delay = (1 - (l.x - minX) / span) * SWEEP + Math.random() * 0.02;
+      for (const l of letters) l.delay = 0.02 + (1 - (l.x - minX) / span) * SWEEP + Math.random() * 0.025;
 
       // Restaura las letras del montaje anterior (por si cambió el tamaño)
       for (const l of state.current.letters ?? []) l.el.style.opacity = '';
-      state.current = { letters, w, h, ctx, last: -1, drawn: false };
-      draw(progress.get());
+      cancelAnimationFrame(state.current.raf);
+      state.current = { letters, w, h, ctx, drawn: false, raf: 0, prev: 0 };
+      // Estado inicial sin animación (p. ej. si se recarga a media página)
+      setTargets(progress.get(), true);
     };
 
     const fontsReady = document.fonts?.ready ?? Promise.resolve();
@@ -143,42 +150,74 @@ export default function ParticleText({ targetRef, progress, wind = [1, -0.6], ga
       clearTimeout(t);
       clearTimeout(rt);
       ro.disconnect();
+      cancelAnimationFrame(state.current.raf);
       for (const l of state.current.letters ?? []) l.el.style.opacity = '';
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduce, targetRef]);
 
-  const draw = (p) => {
+  // El scroll fija el objetivo de cada letra: 0 = letra entera, 1 = deshecha
+  const setTargets = (p, instant = false) => {
     const st = state.current;
     if (!st.letters) return;
-    const q = p <= threshold ? 0 : Math.round(p * 500) / 500;
-    if (q === st.last) return;
-    st.last = q;
+    let changed = instant;
+    for (const l of st.letters) {
+      const target = p > l.delay ? 1 : 0;
+      if (target !== l.target) {
+        l.target = target;
+        changed = true;
+      }
+      if (instant) l.a = target;
+    }
+    if (instant) render();
+    if (changed && !st.raf) {
+      st.prev = performance.now();
+      st.raf = requestAnimationFrame(tick);
+    }
+  };
+
+  // Bucle por tiempo: solo corre mientras alguna letra está en transición
+  const tick = (now) => {
+    const st = state.current;
+    const dt = Math.min(64, now - st.prev);
+    st.prev = now;
+    let moving = false;
+    for (const l of st.letters) {
+      if (l.a === l.target) continue;
+      l.a = l.target > l.a ? Math.min(1, l.a + dt / OUT_MS) : Math.max(0, l.a - dt / IN_MS);
+      if (l.a !== l.target) moving = true;
+    }
+    render(now);
+    st.raf = moving ? requestAnimationFrame(tick) : 0;
+  };
+
+  const render = (now = 0) => {
+    const st = state.current;
     const { ctx } = st;
     if (st.drawn) {
       ctx.clearRect(0, 0, st.w, st.h);
       st.drawn = false;
     }
     for (const l of st.letters) {
-      const t = (q - l.delay) / DURATION;
-      // La letra HTML se apaga justo cuando empieza a convertirse en partículas
-      const op = q === 0 ? 1 : 1 - smooth(clamp01(t / LETTER_FADE));
+      // La letra HTML se apaga mientras sus partículas se sueltan
+      const op = 1 - smooth(clamp01(l.a / LETTER_FADE));
       if (op !== l.opacity) {
         l.opacity = op;
         l.el.style.opacity = op === 1 ? '' : op.toFixed(3);
       }
-      if (q === 0 || t <= 0 || t >= 1 + JITTER / DURATION) continue;
+      if (l.a <= 0 || l.a >= 1) continue;
       ctx.fillStyle = l.color;
       for (const pt of l.parts) {
-        const k = clamp01(t - pt.j / DURATION);
+        const k = clamp01((l.a - pt.j) / (1 - JITTER));
         if (k <= 0 || k >= 1) continue;
-        const e = smooth(k);
-        // Las partículas aparecen a medida que la letra se apaga y se van con el viento
-        const alpha = Math.min(1, k / LETTER_FADE) * (1 - e);
+        const e = easeOut(k);
+        // aparece con la letra, deriva con el viento y se desvanece poco a poco
+        const alpha = Math.min(1, k / 0.08) * (1 - k) ** 1.6;
         if (alpha <= 0.02) continue;
+        const sway = Math.sin(k * 5 + pt.ph + now * 0.0015) * 5 * k;
         ctx.globalAlpha = alpha;
-        const size = pt.s * (1 - e * 0.45);
-        ctx.fillRect(pt.x + pt.dx * e, pt.y + pt.dy * e, size, size);
+        const size = pt.s * (1 - k * 0.5);
+        ctx.fillRect(pt.x + pt.dx * e + sway, pt.y + pt.dy * e + sway * 0.6, size, size);
         st.drawn = true;
       }
     }
@@ -186,8 +225,7 @@ export default function ParticleText({ targetRef, progress, wind = [1, -0.6], ga
   };
 
   useMotionValueEvent(progress, 'change', (v) => {
-    // Se dibuja en el mismo cuadro en que cambia el scroll (sin desfase)
-    if (!reduce) draw(v);
+    if (!reduce) setTargets(v);
   });
 
   if (reduce) return null;
