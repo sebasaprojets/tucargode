@@ -19,7 +19,7 @@
       (function () {
         try {
           var force = /[?&]intro\b/.test(location.search);
-          if (force || (location.hash.length < 2 && localStorage.getItem('tucargo:intro-v1') !== '1')) {
+          if (force || (location.hash.length < 2 && localStorage.getItem('tucargo:intro-v2') !== '1')) {
             var h = document.documentElement;
             h.classList.add('intro-pending');
             // el logo grande de la intro se pide cuanto antes

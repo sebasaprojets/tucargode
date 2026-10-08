@@ -1,97 +1,64 @@
 /**
  * ============================================================================
  *  INTRO CINEMATOGRÁFICA — PARÁMETROS AJUSTABLES
- *  Todo lo que se puede afinar (duración, colores, partículas, cámara lenta…)
- *  está aquí. Tiempos en segundos.
+ *  Formato «brand film»: película del carguero en alta mar con barras de cine,
+ *  HUD de ruta (coordenadas reales Düsseldorf → Caracas), titulares que se
+ *  revelan con máscara, la distancia real contando y, al final, el sello de
+ *  TUCARGO emergiendo en medio del mar antes de deslizarse al header.
+ *  Tiempos en segundos.
  * ============================================================================
  */
 export const INTRO = {
   /* ---- Cuándo se muestra ---- */
-  storageKey: 'tucargo:intro-v1',
-  // 'local' = solo la primera visita · 'session' = una vez por sesión del navegador
-  remember: 'local',
-  // Con «reducir movimiento» activo se hace solo un fundido del logo.
-  // false = en ordenadores se reproduce igual (mismo criterio que el resto del sitio);
-  // true = se respeta también en ordenadores.
+  // Cambiar la clave hace que todos vuelvan a ver la intro una vez.
+  // Si se cambia, actualizar también el script del <head> en index.html.
+  storageKey: 'tucargo:intro-v2',
+  remember: 'local', // 'local' = solo la primera visita · 'session' = una vez por sesión
+  // Con «reducir movimiento» se hace solo un fundido. false = en ordenadores se
+  // reproduce completa (mismo criterio que el resto del sitio); true = se respeta siempre.
   respectReducedMotionOnDesktop: false,
 
-  /* ---- Secuencia (≈ 6,5 s en total) ---- */
+  /* ---- Película (public/media) ---- */
+  video: {
+    desktop: [
+      { src: 'media/intro-1280.webm', type: 'video/webm' },
+      { src: 'media/intro-1280.mp4', type: 'video/mp4' },
+    ],
+    mobile: [
+      { src: 'media/intro-854.webm', type: 'video/webm' },
+      { src: 'media/intro-854.mp4', type: 'video/mp4' },
+    ],
+    poster: 'media/intro-poster.webp',
+    playbackRate: 0.85, // cámara lenta (1 = velocidad normal)
+    focusX: '50%', // encuadre horizontal en pantallas verticales
+    maxWait: 2.5, // s máximos esperando a que el vídeo pueda reproducirse
+  },
+
+  /* ---- Secuencia (≈ 6,5 s + salida) ---- */
   timing: {
-    beamIn: 0.2, //          1) oscuridad: el haz de luz aparece
-    reveal: 1.0, //          2) el logo sale del desenfoque
-    revealDuration: 1.5,
-    ringDraw: 0.9, //           el contorno se dibuja antes del relleno
-    wordmark: 1.9, //           «TUCARGO» con texto «scramble»
-    tagline: 2.4,
-    impact: 2.6, //          3) destello, aberración cromática, sacudida y explosión
-    hint: 3.4, //               aparece «Haz clic para entrar»
-    camera: 3.7, //          4) dolly in + giro en Y
-    cameraDuration: 1.6,
-    exit: 5.0, //            5) salida automática (si el usuario no está interactuando)
+    filmInDuration: 1.6, //  la película aparece desde negro
+    title1: 0.6, //          «De Alemania / a Venezuela.»
+    title1Out: 1.9,
+    title2: 2.55, //         «7.965 km» contando + «Ninguna distancia es suficiente.»
+    title2Out: 3.8,
+    ripples: 4.05, //        corte al mar abierto: el agua se agita…
+    ring: 4.15, //            …un aro se cierra…
+    ringDuration: 1.3,
+    logo: 4.35, //            …y el sello emerge del agua
+    logoDuration: 1.4,
+    letters: 5.0, //         «TUCARGO» letra a letra
+    letterStagger: 0.07,
+    shine: 5.5, //           brillo que cruza el logo
+    exit: 6.5, //            las barras se abren y el logo se desliza al header
     exitDuration: 1.5,
-    skipDuration: 0.75, //      salida rápida al pulsar «Saltar intro» o Esc
-    maxWait: 14, //             tiempo máximo si el usuario sigue jugando
+    skipDuration: 0.7,
   },
 
-  /* ---- Colores (paleta del logo) ---- */
-  colors: {
-    bg: '#01070D',
-    bgGlow: '#04213A',
-    light: '#7FD6F8', // haz volumétrico y brillo
-    dust: '#E1F5FE',
-    sea: '#01B9FF',
-    spark: '#CC4D47', // chispas rojas del casco (pocas)
-  },
-
-  /* ---- Partículas ---- */
-  particles: {
-    dust: { desktop: 900, mobile: 240 }, // polvo flotante
-    burst: { desktop: 650, mobile: 200 }, // explosión del impacto
-    clickBurst: { desktop: 260, mobile: 120 }, // explosión al pulsar el logo
-    max: 2000, // tope absoluto en pantalla
-    repelRadius: 150, // px alrededor del cursor
-    repelForce: 1, // intensidad de la repulsión
-    parallax: 28, // px máximos de desplazamiento por profundidad
-    burstSlowMo: 0.42, // velocidad de la explosión (1 = tiempo real)
-    gravity: 60, // px/s² (en cámara lenta)
-  },
-
-  /* ---- Cámara y efectos ---- */
-  logoSize: { desktop: 200, mobile: 132 }, // px
-  tiltMax: 15, // grados con el ratón / giroscopio
-  cameraTurn: 9, // grados de giro en Y durante el dolly
-  cameraZoom: 1.08, // dolly in
-  shake: 7, // px de la sacudida de cámara
-  aberration: 7, // px de separación RGB
-  grain: 0.09, // opacidad del grano de película
-  bulletTime: 0.2, // escala de tiempo al mantener pulsado
-  holdDelay: 0.22, // s pulsando para activar el «bullet time»
-  sound: false, // sonido activado por defecto (los navegadores bloquean el autoplay)
+  /* ---- Escena ---- */
+  sealSize: { desktop: 180, mobile: 132 }, // px del sello
+  cameraZoom: [1.08, 1.0], // dolly lento de la película (inicio → final)
+  tiltMax: 7, // grados del parallax 3D del logo con el ratón
+  filmParallax: 18, // px que se desplaza la película con el ratón
+  mist: { desktop: { blobs: 16, motes: 60 }, mobile: { blobs: 8, motes: 30 } },
+  colors: { mist: '#BFE6F7' },
 };
-
-/** Easing cubic-bezier(x1, y1, x2, y2) como función (para GSAP). */
-export function cubicBezier(x1, y1, x2, y2) {
-  const cx = 3 * x1;
-  const bx = 3 * (x2 - x1) - cx;
-  const ax = 1 - cx - bx;
-  const cy = 3 * y1;
-  const by = 3 * (y2 - y1) - cy;
-  const ay = 1 - cy - by;
-  const sx = (t) => ((ax * t + bx) * t + cx) * t;
-  const sy = (t) => ((ay * t + by) * t + cy) * t;
-  const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
-  return (x) => {
-    if (x <= 0) return 0;
-    if (x >= 1) return 1;
-    let t = x;
-    for (let i = 0; i < 6; i++) {
-      const d = dx(t);
-      if (Math.abs(d) < 1e-6) break;
-      t -= (sx(t) - x) / d;
-    }
-    return sy(Math.min(1, Math.max(0, t)));
-  };
-}
-
-/** Curva principal de la intro: cubic-bezier(0.16, 1, 0.3, 1). */
-export const CINEMATIC_EASE = cubicBezier(0.16, 1, 0.3, 1);

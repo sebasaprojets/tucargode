@@ -68,12 +68,17 @@ Os dados vêm do conteúdo publicado em tucargo.de (início, «¿Quiénes somos?
 
 ## Intro cinematográfica (splash)
 
-- Arquivos em `src/components/Intro/`. **Todos os ajustes** (duração de cada fase, cores, quantidade de partículas, câmera lenta, tilt, sacudida, aberração cromática, grão, som) ficam em `introConfig.js`.
-- Usa o mesmo logo do header (`siteConfig.brand.logo`); no final o logo voa até a posição exata dele no header (GSAP Flip).
-- Aparece só na primeira visita (`localStorage`, chave `tucargo:intro-v1`). Para rever: botão **Ver intro** no rodapé, ou abra o site com `?intro`. Links diretos a uma seção (`#calculadora`) pulam a intro.
-- Interação: tilt 3D com o mouse ou giroscópio, cursor com brilho e efeito magnético, partículas com repulsão, clique no logo = onda de choque, segurar = bullet time. `Esc` ou **Saltar intro** pulam.
-- Com «reduzir movimento» ativo, faz só um fundido do logo (no celular e tablet; no computador segue o mesmo critério do resto do site, ajustável em `respectReducedMotionOnDesktop`).
-- O som é gerado no navegador (Web Audio, sem arquivos) e começa desligado.
+Formato «brand film», ≈ 6,5 s + saída, só na primeira visita:
+1. Barras de cinema com painel (rota Düsseldorf → Caracas, coordenadas reais, timecode e barra de progresso), grão e névoa. O filme do cargueiro entra do preto, em câmera lenta.
+2. Títulos com máscara: «De Alemania a Venezuela.» e a distância real contando até 7.965 km — «Ninguna distancia es suficiente.»
+3. Corte para o mar aberto: o mar se agita, um aro se fecha e o selo da TUCARGO emerge com reflexo; «TUCARGO» letra a letra e um brilho cruzando o logo.
+4. As barras se abrem e o logo desliza até a posição exata dele no header (GSAP Flip), enquanto o site entra em cascata.
+
+- Arquivos: `src/components/Intro/` (`introConfig.js` concentra tempos, tamanhos, câmera lenta, zoom, névoa e fontes do vídeo).
+- Vídeo em `public/media/` (`intro-1280.*` computador, `intro-854.*` celular, `intro-poster.webp`), sem áudio, editado a partir do vídeo enviado (sem as partes com o logo sobreposto). Para trocar o filme, substitua esses arquivos mantendo os nomes.
+- Interação: parallax 3D lento com mouse/giroscópio, clique no mar = ondas, «Saltar intro» e `Esc`.
+- Para rever: botão **Ver intro** no rodapé ou `?intro` na URL. Links diretos a uma seção (`#calculadora`) pulam a intro.
+- «Reduzir movimento» = só um fundido (no computador segue o critério do resto do site; ajustável em `respectReducedMotionOnDesktop`).
 - Se mudar `storageKey`, atualize também o script no `<head>` do `index.html`.
 
 ## Vídeos cinematográficos (Higgsfield)
