@@ -1,12 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  m,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from 'framer-motion';
+import { m, useMotionValueEvent, useScroll, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import Button from '../ui/Button';
@@ -26,6 +19,7 @@ import {
   PLANE_PATH,
 } from './VoyageArt';
 import './Connection.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 const STEPS = connectionStory.length;
 // Cada etapa ocupa una franja del recorrido; se solapan un poco para un fundido suave
@@ -64,7 +58,7 @@ function Caption({ p, i, step, last }) {
 export default function Connection() {
   const wrapRef = useRef(null);
   const sceneRef = useRef(null);
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const video = siteConfig.media.voyage;
   const hasVideo = Boolean(video.mp4 || video.webm);
   const isMobile = useIsMobile();

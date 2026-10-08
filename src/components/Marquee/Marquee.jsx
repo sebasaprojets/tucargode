@@ -1,17 +1,9 @@
 import { useEffect, useRef } from 'react';
-import {
-  m,
-  useAnimationFrame,
-  useMotionValue,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  useVelocity,
-} from 'framer-motion';
+import { m, useAnimationFrame, useMotionValue, useScroll, useSpring, useTransform, useVelocity } from 'framer-motion';
 import { Plane, Ship, House, Truck, PackageOpen, Warehouse, MapPin } from 'lucide-react';
 import { mainCities } from '../../data/destinations';
 import './Marquee.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 const wrap = (min, max, v) => {
   const r = max - min;
@@ -24,7 +16,7 @@ const wrap = (min, max, v) => {
  * se baje o se suba. Solo transform: no provoca reflow.
  */
 function Row({ items, baseVelocity }) {
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const velocity = useVelocity(scrollY);

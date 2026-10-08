@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { m, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Calculator, Plane, Ship, Truck, ArrowDown } from 'lucide-react';
 import Button from '../ui/Button';
 import Magnetic from '../ui/Magnetic';
@@ -9,13 +9,14 @@ import ParticleText from '../ParticleText/ParticleText';
 import { shippingModes } from '../../data/shippingRates';
 import { siteConfig } from '../../config/siteConfig';
 import './Hero.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 const ease = [0.22, 1, 0.36, 1];
 
 export default function Hero() {
   const ref = useRef(null);
   const titleRef = useRef(null);
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
 
   // Cámara: scroll (dolly out) + cursor (parallax en tres planos)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
@@ -23,7 +24,6 @@ export default function Hero() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   // El título se deshace en partículas al bajar (completo al 45% del hero)
   const dissolve = useTransform(scrollYProgress, [0.02, 0.45], [0, 1]);
-
 
   const air = shippingModes.air;
   const sea = shippingModes.sea;

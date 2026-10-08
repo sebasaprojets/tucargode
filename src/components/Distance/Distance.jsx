@@ -1,5 +1,5 @@
 import { lazy, Suspense, useRef } from 'react';
-import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { m, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Calculator, Plane, Ship, House } from 'lucide-react';
 import Reveal from '../ui/Reveal';
 import SplitText from '../ui/SplitText';
@@ -13,6 +13,7 @@ import { origin, destinations } from '../../data/destinations';
 import { rateZones } from '../../data/shippingRates';
 import { siteConfig } from '../../config/siteConfig';
 import './Distance.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 const Globe = lazy(() => import('../Globe/Globe'));
 
@@ -24,7 +25,7 @@ const KM = Math.round(distanceKm(origin.coords, destinations.find((d) => d.id ==
  */
 export default function Distance() {
   const ref = useRef(null);
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] });
   // Acercamiento lento de «cámara» al entrar en la sección
   const scale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [0.82, 1]);

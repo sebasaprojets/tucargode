@@ -135,5 +135,5 @@
 
 
 @media (prefers-reduced-motion: reduce) {
-  .globe__hint { animation: none; opacity: 1; }
+  html:not(.motion-ok) .globe__hint { animation: none; opacity: 1; }
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { useMotionValueEvent, useReducedMotion } from 'framer-motion';
+import { useMotionValueEvent } from 'framer-motion';
 import './ParticleText.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 /**
  * Texto que se convierte en partículas (patrón de React Bits).
@@ -18,7 +19,7 @@ import './ParticleText.css';
 export default function ParticleText({ targetRef, progress, wind = [1, -0.6], gap, colors, threshold = 0.02, pad = 260 }) {
   const canvasRef = useRef(null);
   const state = useRef({ particles: null, w: 0, h: 0, dpr: 1, last: -1 });
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
 
   // Construye las partículas a partir del texto real (tras cargar las fuentes)
   useEffect(() => {

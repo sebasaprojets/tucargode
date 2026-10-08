@@ -204,8 +204,8 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hs-plane { left: 55%; animation: none; }
-  .hs-ship { left: 55%; animation: none; opacity: 1; }
+  html:not(.motion-ok) .hs-plane { left: 55%; animation: none; }
+  html:not(.motion-ok) .hs-ship { left: 55%; animation: none; opacity: 1; }
 }
 
 /* ---- «TUCARGO» construido con el humo del avión ---- */

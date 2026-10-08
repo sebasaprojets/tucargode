@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useReducedMotion } from 'framer-motion';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 /**
  * Partículas ambientales en canvas 2D (inspirado en «Particles» de React Bits).
@@ -9,7 +9,7 @@ import { useReducedMotion } from 'framer-motion';
  */
 export default function Particles({ className, density = 0.00009, color = '139,189,244', maxCount = 90 }) {
   const ref = useRef(null);
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
 
   useEffect(() => {
     const canvas = ref.current;

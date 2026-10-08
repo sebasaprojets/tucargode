@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useBodyLock } from '../../hooks/useBodyLock';
 import './Modal.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 
@@ -11,7 +12,7 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
 export default function Modal({ open, onClose, title, labelledBy = 'modal-title', children }) {
   const panelRef = useRef(null);
   const lastFocus = useRef(null);
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   useBodyLock(open);
 
   useEffect(() => {

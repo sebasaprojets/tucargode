@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { useReducedMotion } from 'framer-motion';
+
 import './CinematicVideo.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 const asset = (p) => (p ? `${import.meta.env.BASE_URL}${p}` : null);
 
@@ -13,7 +14,7 @@ const asset = (p) => (p ? `${import.meta.env.BASE_URL}${p}` : null);
  */
 export default function CinematicVideo({ mp4, webm, poster, mobileMp4, className = '' }) {
   const ref = useRef(null);
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const [load, setLoad] = useState(false);
   const saveData = typeof navigator !== 'undefined' && navigator.connection?.saveData;
   const staticOnly = reduce || saveData;

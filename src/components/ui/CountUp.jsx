@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { animate, useInView, useReducedMotion } from 'framer-motion';
+import { animate, useInView } from 'framer-motion';
 import { formatInt } from '../../utils/format';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 /** Contador animado (patrón «Count Up» de React Bits). */
 export default function CountUp({ to, from = 0, duration = 2, format = true, className }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, amount: 0.6 });
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const [value, setValue] = useState(reduce ? to : from);
 
   useEffect(() => {

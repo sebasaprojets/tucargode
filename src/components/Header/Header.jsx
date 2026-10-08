@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Logo from '../ui/Logo';
 import Button from '../ui/Button';
@@ -8,6 +8,7 @@ import { navItems, siteConfig, whatsappLink } from '../../config/siteConfig';
 import { useScrolled, useActiveSection } from '../../hooks/useScrollAnimation';
 import { useBodyLock } from '../../hooks/useBodyLock';
 import './Header.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 const ids = navItems.map((n) => n.id);
 
@@ -15,7 +16,7 @@ export default function Header() {
   const scrolled = useScrolled(24);
   const active = useActiveSection(ids);
   const [open, setOpen] = useState(false);
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   useBodyLock(open);
 
   useEffect(() => {

@@ -1,16 +1,17 @@
 import { useRef } from 'react';
-import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { m, useScroll, useTransform } from 'framer-motion';
 import { PackageOpen, Send, Plane, House } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import { RevealGroup, RevealItem } from '../ui/Reveal';
 import { howItWorks } from '../../data/content';
 import './HowItWorks.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 const icons = [PackageOpen, Send, Plane, House];
 
 export default function HowItWorks() {
   const ref = useRef(null);
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 60%'] });
   const p = useTransform(scrollYProgress, [0, 1], [reduce ? 1 : 0, 1]);
 

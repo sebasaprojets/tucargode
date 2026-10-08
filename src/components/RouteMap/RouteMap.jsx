@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { m, useReducedMotion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Plane, Ship } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import Reveal from '../ui/Reveal';
@@ -8,6 +8,7 @@ import { destinations, origin } from '../../data/destinations';
 import { rateZones } from '../../data/shippingRates';
 import { useIsMobile } from '../../hooks/useMediaQuery';
 import './RouteMap.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 const [ox, oy] = project(origin.coords);
 const caracas = project(destinations.find((d) => d.id === 'caracas').coords);
@@ -43,7 +44,7 @@ export default function RouteMap() {
   const dots = useMemo(() => buildDotsPath(), []);
   const [active, setActive] = useState('air');
   const [hover, setHover] = useState(false);
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const isMobile = useIsMobile();
   const route = routes[active];
   const viewBox = isMobile ? `170 30 1000 622` : `0 0 ${WIDTH} ${HEIGHT}`;

@@ -1,4 +1,6 @@
 import { lazy, useEffect } from 'react';
+import { useMediaQuery } from './hooks/useMediaQuery';
+import { DESKTOP_MOTION_QUERY } from './hooks/useMotionPreference';
 import { LazyMotion, MotionConfig, domAnimation } from 'framer-motion';
 import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
@@ -29,6 +31,7 @@ const Instagram = lazy(() => import('./components/Instagram/Instagram'));
 const Footer = lazy(() => import('./components/Footer/Footer'));
 
 export default function App() {
+  const desktopMotion = useMediaQuery(DESKTOP_MOTION_QUERY);
   useEffect(() => {
     const off = initAnchorNavigation();
     initSmoothScroll();
@@ -37,7 +40,7 @@ export default function App() {
 
   return (
     <LazyMotion features={domAnimation} strict>
-    <MotionConfig reducedMotion="user">
+    <MotionConfig reducedMotion={desktopMotion ? 'never' : 'user'}>
       <a href="#main" className="skip-link">
         Saltar al contenido
       </a>

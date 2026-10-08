@@ -177,13 +177,15 @@ button {
   color: var(--color-accent);
 }
 
+/* «Reducir movimiento»: se respeta en móvil y tablet. En escritorio (html.motion-ok)
+   las animaciones ambientales se mantienen por decisión de diseño. */
 @media (prefers-reduced-motion: reduce) {
-  html {
+  html:not(.motion-ok) {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
+  html:not(.motion-ok) *,
+  html:not(.motion-ok) *::before,
+  html:not(.motion-ok) *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;

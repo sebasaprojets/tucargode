@@ -1,6 +1,7 @@
 import { useRef } from 'react';
-import { m, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
+import { m, useMotionValue, useSpring } from 'framer-motion';
 import { useCanHover } from '../../hooks/useMediaQuery';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 /**
  * Efecto magnético (patrón «Magnet» de React Bits): el elemento sigue
@@ -9,7 +10,7 @@ import { useCanHover } from '../../hooks/useMediaQuery';
 export default function Magnetic({ children, strength = 0.28, className = '' }) {
   const ref = useRef(null);
   const canHover = useCanHover();
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 120, damping: 14, mass: 0.7 });

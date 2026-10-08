@@ -1,10 +1,11 @@
-import { m, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { m, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useEffect } from 'react';
 import Particles from '../ui/Particles';
 import SkyWriting from './SkyWriting';
 import { Ship, DusseldorfSkyline, WaveBand } from '../Connection/VoyageArt';
 import { useCanHover } from '../../hooks/useMediaQuery';
 import './HeroScene.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 /** Avión de carga en vista lateral, morro a la izquierda (vuela hacia el oeste: Venezuela). */
 function CargoPlane() {
@@ -79,7 +80,7 @@ function CityLights() {
  * (compositor), así la escena no se repinta en cada cuadro.
  */
 export default function HeroScene({ targetRef }) {
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const canHover = useCanHover();
   const { scrollYProgress } = useScroll({ target: targetRef, offset: ['start start', 'end start'] });
 

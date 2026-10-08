@@ -1,11 +1,12 @@
-import { m, useReducedMotion } from 'framer-motion';
+import { m } from 'framer-motion';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 /**
  * Animación de texto palabra por palabra (patrón «Split Text» de React Bits).
  * Mantiene el texto completo accesible para lectores de pantalla.
  */
 export default function SplitText({ text, as = 'span', id, className, delay = 0, stagger = 0.045, animateOnMount = false }) {
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const Tag = as;
   const lines = text.split('\n');
 

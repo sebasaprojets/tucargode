@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useReducedMotion } from 'framer-motion';
+
 import { Hand, LocateFixed } from 'lucide-react';
 import Flag from '../ui/Flag';
 import landDots from './landDots.json';
@@ -19,6 +19,7 @@ import {
 import { origin, destinations } from '../../data/destinations';
 import { formatInt } from '../../utils/format';
 import './Globe.css';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 const FROM = origin.coords; // Düsseldorf
 const TO = destinations.find((d) => d.id === 'caracas').coords; // Caracas
@@ -163,7 +164,7 @@ export default function Globe({ showDistance = true }) {
   const labelTo = useRef(null);
   const badge = useRef(null);
   const badgeValue = useRef(null);
-  const reduce = useReducedMotion();
+  const reduce = useReduceMotion();
   const scene = useMemo(buildScene, []);
   const [hint, setHint] = useState(true);
   const [away, setAway] = useState(false);
