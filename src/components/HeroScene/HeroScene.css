@@ -1,0 +1,209 @@
+/* ==========================================================================
+   Escena del hero: partida nocturna. Solo transform/opacity en animaciones.
+   ========================================================================== */
+.hs {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hs > * { position: absolute; }
+
+/* ---- Cielo ---- */
+.hs-sky {
+  inset: -120px 0 0;
+  background:
+    radial-gradient(60% 45% at 72% 74%, rgba(204, 77, 71, 0.22), transparent 70%),
+    radial-gradient(80% 50% at 60% 80%, rgba(1, 157, 216, 0.18), transparent 70%),
+    linear-gradient(to bottom, #010A14 0%, #031527 35%, #072E4E 68%, #0F4A73 80%, #1A5B85 86%);
+}
+.hs-stars {
+  position: absolute;
+  inset: 0 0 30%;
+  opacity: 0.8;
+  background-image:
+    radial-gradient(1px 1px at 8% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 18% 34%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 27% 8%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 39% 22%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 51% 6%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 61% 30%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 69% 14%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 78% 40%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 88% 10%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 94% 28%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 33% 46%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 84% 52%, #fff 50%, transparent 51%);
+  animation: hs-twinkle 6s ease-in-out infinite alternate;
+}
+@keyframes hs-twinkle { to { opacity: 0.45; } }
+.hs-moon {
+  position: absolute;
+  bottom: 21%;
+  right: 22%;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 38%, #FFFDF4, #F4EBD3 55%, #D9CDB0);
+  box-shadow: 0 0 60px 18px rgba(255, 244, 214, 0.18), 0 0 160px 60px rgba(127, 214, 248, 0.08);
+}
+.hs-particles { inset: 0; width: 100%; height: 70%; }
+
+/* ---- Horizonte (Düsseldorf) ---- */
+.hs-city {
+  right: 0;
+  bottom: 17%;
+  width: min(62vw, 900px);
+  height: 46%;
+  opacity: 0.95;
+}
+.hs-city svg { width: 100%; height: 100%; display: block; }
+
+/* ---- Avión ---- */
+.hs-plane-layer { inset: 0; }
+.hs-plane {
+  position: absolute;
+  top: 18%;
+  left: 100%;
+  width: clamp(220px, 26vw, 420px);
+  animation: hs-flight 26s linear infinite;
+  animation-delay: -6s;
+  will-change: transform;
+}
+@keyframes hs-flight {
+  0% { transform: translate3d(0, 40px, 0) rotate(-3deg); }
+  100% { transform: translate3d(calc(-100vw - 520px), -60px, 0) rotate(-3deg); }
+}
+.hs-plane__svg { position: relative; width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 18px rgba(1, 185, 255, 0.25)); }
+.hs-plane__trail {
+  position: absolute;
+  left: 92%;
+  top: 46%;
+  width: 70vw;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(220, 240, 255, 0.55), rgba(127, 214, 248, 0.18) 35%, transparent 80%);
+  transform-origin: left center;
+}
+.hs-light {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.hs-light--beacon { left: 46%; top: 36%; background: #FF4D4D; box-shadow: 0 0 10px 3px rgba(255, 77, 77, 0.8); animation: hs-blink 1.4s steps(1) infinite; }
+.hs-light--strobe { left: 93%; top: 3%; background: #FFFFFF; box-shadow: 0 0 14px 5px rgba(255, 255, 255, 0.9); animation: hs-strobe 1.8s infinite; }
+.hs-light--wing { left: 47%; top: 89%; background: #FF4D4D; box-shadow: 0 0 10px 3px rgba(255, 77, 77, 0.8); animation: hs-blink 1.4s steps(1) infinite 0.7s; }
+@keyframes hs-blink { 50% { opacity: 0.15; } }
+@keyframes hs-strobe { 0%, 8%, 100% { opacity: 0; } 2%, 5% { opacity: 1; } }
+
+/* ---- Mar ---- */
+.hs-sea {
+  left: 0;
+  right: 0;
+  bottom: -40px;
+  height: calc(18% + 40px);
+  background: linear-gradient(to bottom, #0A3E68 0%, #052A47 30%, #031B30 100%);
+}
+.hs-sea__reflection {
+  position: absolute;
+  top: 0;
+  right: calc(22% - 6px);
+  width: 140px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 244, 214, 0.35) 0 3px,
+    transparent 3px 11px
+  );
+  mask-image: linear-gradient(to bottom, #000, transparent 85%);
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 85%);
+  animation: hs-shimmer 3.5s ease-in-out infinite alternate;
+}
+@keyframes hs-shimmer { to { opacity: 0.55; transform: scaleX(1.25); } }
+.hs-wave { position: absolute; left: 0; width: 200%; will-change: transform; }
+.hs-wave svg { width: 100%; height: 100%; display: block; }
+.hs-wave--back { top: -6px; height: 50px; animation: hs-wave 30s linear infinite; }
+.hs-wave--front { bottom: 0; height: 58%; animation: hs-wave 20s linear infinite reverse; }
+@keyframes hs-wave { to { transform: translateX(-50%); } }
+
+/* ---- Barco ---- */
+.hs-ship-layer { position: absolute; inset: 0; }
+.hs-ship {
+  position: absolute;
+  top: -66px;
+  left: 0;
+  width: clamp(220px, 24vw, 380px);
+  animation: hs-sail 46s linear infinite;
+  animation-delay: -8s;
+  will-change: transform;
+}
+/* Sale del puerto (derecha) rumbo al oeste y se desvanece antes de llegar al texto */
+@keyframes hs-sail {
+  0% { transform: translate3d(92vw, 0, 0); opacity: 0; }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translate3d(40vw, 0, 0); opacity: 0; }
+}
+.hs-ship__bob { position: relative; animation: hs-bob 6s ease-in-out infinite; transform-origin: 50% 85%; }
+@keyframes hs-bob {
+  0%, 100% { transform: translateY(0) rotate(1.2deg); }
+  50% { transform: translateY(-5px) rotate(-1.4deg); }
+}
+.hs-ship__svg { width: 100%; height: auto; display: block; filter: brightness(0.78) saturate(0.9); }
+.hs-ship__reflection {
+  position: absolute;
+  left: 0;
+  top: 82%;
+  width: 100%;
+  height: auto;
+  transform: scaleY(-0.6);
+  transform-origin: top;
+  opacity: 0.18;
+  mask-image: linear-gradient(to bottom, #000, transparent 70%);
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 70%);
+}
+.hs-ship__light {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #FFE1A3;
+  box-shadow: 0 0 12px 4px rgba(255, 210, 140, 0.7);
+}
+.hs-ship__light--a { left: 20%; top: 26%; }
+.hs-ship__light--b { left: 44%; top: 46%; background: #9BE7FF; box-shadow: 0 0 10px 3px rgba(127, 214, 248, 0.7); }
+
+.hs-vignette {
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(1, 10, 20, 0.75) 0%, rgba(1, 10, 20, 0.35) 38%, transparent 60%),
+    linear-gradient(to top, rgba(2, 18, 31, 0.6), transparent 30%);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 767px) {
+  .hs-city { width: 110vw; height: 30%; bottom: 13%; opacity: 0.75; }
+  .hs-sea { height: calc(14% + 40px); }
+  .hs-moon { bottom: 16%; right: 10%; width: 64px; height: 64px; }
+  .hs-sea__reflection { right: calc(10% - 8px); width: 80px; }
+  /* Faja de cielo propia para el avión, sobre el texto */
+  .hs-plane { top: calc(var(--header-h) + 14px); width: 230px; opacity: 1; animation-duration: 14s; animation-delay: -4s; }
+  .hs-plane__trail { height: 3px; }
+  .hs-ship { width: 170px; top: -44px; animation-duration: 34s; }
+  @keyframes hs-sail {
+    0% { transform: translate3d(100vw, 0, 0); opacity: 0; }
+    8% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translate3d(-50vw, 0, 0); opacity: 0; }
+  }
+  .hs-vignette {
+    background:
+      linear-gradient(to bottom, rgba(1, 10, 20, 0.2) 0%, rgba(1, 10, 20, 0.65) 45%, rgba(1, 10, 20, 0.3) 75%, rgba(2, 18, 31, 0.6) 100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hs-plane { left: 55%; animation: none; }
+  .hs-ship { left: 55%; animation: none; opacity: 1; }
+}

@@ -1,15 +1,12 @@
-import { lazy, Suspense, useRef } from 'react';
-import { m, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Calculator, Plane, Ship, Truck, ArrowDown } from 'lucide-react';
 import Button from '../ui/Button';
 import Magnetic from '../ui/Magnetic';
 import SplitText from '../ui/SplitText';
-import Particles from '../ui/Particles';
-import { useIsMobile, useCanHover } from '../../hooks/useMediaQuery';
-
-// El globo (canvas + datos del mapa) va en un chunk propio: el texto del hero pinta primero.
-const Globe = lazy(() => import('../Globe/Globe'));
-import { shippingModes, rateZones } from '../../data/shippingRates';
+import HeroScene from '../HeroScene/HeroScene';
+import ParticleText from '../ParticleText/ParticleText';
+import { shippingModes } from '../../data/shippingRates';
 import { siteConfig } from '../../config/siteConfig';
 import './Hero.css';
 
@@ -17,32 +14,16 @@ const ease = [0.22, 1, 0.36, 1];
 
 export default function Hero() {
   const ref = useRef(null);
+  const titleRef = useRef(null);
   const reduce = useReducedMotion();
-  const isMobile = useIsMobile();
-  const canHover = useCanHover();
 
   // Cámara: scroll (dolly out) + cursor (parallax en tres planos)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const contentY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 120]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const sceneScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 1.12]);
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 200]);
+  // El título se deshace en partículas al bajar (completo al 45% del hero)
+  const dissolve = useTransform(scrollYProgress, [0.02, 0.45], [0, 1]);
 
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 40, damping: 18 });
-  const sy = useSpring(my, { stiffness: 40, damping: 18 });
-  const bgX = useTransform(sx, (v) => v * -12);
-  const bgYm = useTransform(sy, (v) => v * -8);
-  const fgX = useTransform(sx, (v) => v * 32);
-  const fgY = useTransform(sy, (v) => v * 22);
-
-  const onPointerMove = (e) => {
-    if (reduce || !canHover) return;
-    const r = ref.current.getBoundingClientRect();
-    mx.set((e.clientX - r.left) / r.width - 0.5);
-    my.set((e.clientY - r.top) / r.height - 0.5);
-  };
 
   const air = shippingModes.air;
   const sea = shippingModes.sea;
@@ -50,20 +31,11 @@ export default function Hero() {
   return (
     <section
       ref={ref}
-      className="hero theme-dark noise"
+      className="hero theme-dark"
       aria-labelledby="hero-title"
-      onPointerMove={onPointerMove}
     >
-      {/* BACKGROUND — cielo, horizonte, atmósfera */}
-      <m.div className="hero__bg" style={{ x: bgX, y: bgY }} aria-hidden="true">
-        <m.div className="hero__bg-inner" style={{ y: bgYm }}>
-          <div className="hero__aurora hero__aurora--blue" />
-          <div className="hero__aurora hero__aurora--red" />
-          <div className="hero__grid" />
-          <div className="hero__horizon" />
-        </m.div>
-      </m.div>
-      <Particles className="hero__particles" />
+      {/* Escena cinematográfica: avión y barco partiendo de Düsseldorf de noche */}
+      <HeroScene targetRef={ref} />
 
       <div className="hero__layout container">
         {/* FOREGROUND — mensaje y CTA */}
@@ -78,15 +50,20 @@ export default function Hero() {
             Alemania <ArrowRight size={14} aria-hidden="true" /> Venezuela · desde {siteConfig.foundedYear}
           </m.p>
 
-          <SplitText
-            as="h1"
-            id="hero-title"
-            className="hero__title"
-            text={'De Alemania a Venezuela.\nTu carga, en buenas manos.'}
-            animateOnMount
-            delay={0.08}
-            stagger={0.045}
-          />
+          <div className="hero__title-wrap">
+            <div ref={titleRef}>
+              <SplitText
+                as="h1"
+                id="hero-title"
+                className="hero__title"
+                text={'De Alemania a Venezuela.\nTu carga, en buenas manos.'}
+                animateOnMount
+                delay={0.08}
+                stagger={0.045}
+              />
+            </div>
+            <ParticleText targetRef={titleRef} progress={dissolve} wind={[1.1, -0.8]} />
+          </div>
 
           <m.p
             className="hero__lead"
@@ -134,47 +111,6 @@ export default function Hero() {
           </m.ul>
         </m.div>
 
-        {/* MIDDLE-GROUND — el mundo */}
-        <m.div
-          className="hero__scene"
-          style={isMobile ? undefined : { scale: sceneScale }}
-          initial={reduce ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, ease, delay: 0.2 }}
-        >
-          <Suspense fallback={<div className="globe-fallback" aria-hidden="true" />}>
-            <Globe />
-          </Suspense>
-
-          {!isMobile && (
-            <m.div
-              className="hero__card"
-              style={{ x: fgX, y: fgY }}
-              initial={reduce ? false : { opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease, delay: 3.9 }}
-            >
-              <p className="hero__card-title">
-                <span className="hero__live" aria-hidden="true" /> Ruta DUS → VE
-              </p>
-              <dl>
-                <div>
-                  <dt>
-                    <Plane size={14} aria-hidden="true" /> Aéreo
-                  </dt>
-                  <dd>{rateZones.main.transit.air}</dd>
-                </div>
-                <div>
-                  <dt>
-                    <Ship size={14} aria-hidden="true" /> Marítimo
-                  </dt>
-                  <dd>{rateZones.main.transit.sea}</dd>
-                </div>
-              </dl>
-              <p className="hero__card-note">Ciudades principales · desde la salida</p>
-            </m.div>
-          )}
-        </m.div>
       </div>
 
       <a href="#conexion" className="hero__scroll" aria-label="Seguir bajando">

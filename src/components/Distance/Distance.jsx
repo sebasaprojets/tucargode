@@ -3,10 +3,11 @@ import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Calculator, Plane, Ship, House } from 'lucide-react';
 import Reveal from '../ui/Reveal';
 import SplitText from '../ui/SplitText';
-import CountUp from '../ui/CountUp';
 import Button from '../ui/Button';
 import Magnetic from '../ui/Magnetic';
 import Flag from '../ui/Flag';
+import ParticleText from '../ParticleText/ParticleText';
+import { formatInt } from '../../utils/format';
 import { distanceKm } from '../Globe/globeMath';
 import { origin, destinations } from '../../data/destinations';
 import { rateZones } from '../../data/shippingRates';
@@ -30,6 +31,11 @@ export default function Distance() {
   const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [80, 0]);
   const glowOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
+  // «7.965 km» se forma con partículas que se juntan al entrar en pantalla
+  const kmRef = useRef(null);
+  const { scrollYProgress: kmIn } = useScroll({ target: kmRef, offset: ['start end', 'center 62%'] });
+  const assemble = useTransform(kmIn, [0, 1], [1, 0]);
+
   return (
     <section ref={ref} className="distance theme-dark" aria-labelledby="distance-title">
       <m.div className="distance__glow" style={{ opacity: glowOpacity }} aria-hidden="true" />
@@ -43,11 +49,20 @@ export default function Distance() {
             <Flag code="ve" size={18} /> Caracas
           </Reveal>
 
-          <Reveal className="distance__km" delay={0.05}>
-            <span className="distance__approx">≈</span>
-            <CountUp to={KM} duration={2.4} />
-            <span className="distance__unit">km</span>
-          </Reveal>
+          <div className="distance__km-wrap">
+            <div ref={kmRef} className="distance__km">
+              <span className="distance__approx">≈</span>
+              <span>{formatInt(KM)}</span>
+              <span className="distance__unit">km</span>
+            </div>
+            <ParticleText
+              targetRef={kmRef}
+              progress={assemble}
+              wind={[-1, 0.5]}
+              pad={220}
+              colors={(line, el) => (el.classList.contains('distance__km') ? '#D9F3FE' : '#7FD6F8')}
+            />
+          </div>
           <Reveal as="p" variant="fade" delay={0.1} className="distance__caption">
             en línea recta entre Alemania y Venezuela
           </Reveal>

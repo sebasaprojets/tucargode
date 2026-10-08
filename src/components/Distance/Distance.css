@@ -73,6 +73,7 @@
 }
 @keyframes distance-run { to { left: 110%; } }
 
+.distance__km-wrap { position: relative; }
 .distance__km {
   display: flex;
   align-items: baseline;

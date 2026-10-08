@@ -53,9 +53,16 @@ export async function scrollToId(id, { focus = true } = {}) {
   const top = id === 'inicio' ? 0 : el.getBoundingClientRect().top + window.scrollY - headerOffset();
   if (lenis) lenis.scrollTo(top, { duration: 1.2 });
   else window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
-  if (focus) {
-    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+  // En pantallas táctiles no se mueve el foco: un toque posterior dentro de la sección
+  // podría hacer que el navegador salte a su inicio
+  const touch = window.matchMedia('(pointer: coarse)').matches;
+  if (focus && !touch) {
+    // Foco accesible temporal: se retira al salir para que un toque posterior
+    // dentro de la sección no la vuelva a enfocar (y el navegador no salte a su inicio)
+    const added = !el.hasAttribute('tabindex');
+    if (added) el.setAttribute('tabindex', '-1');
     el.focus({ preventScroll: true });
+    if (added) el.addEventListener('blur', () => el.removeAttribute('tabindex'), { once: true });
   }
 }
 

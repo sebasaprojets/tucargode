@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   m,
-  useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
@@ -73,8 +72,9 @@ export default function Connection() {
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ['start start', 'end end'] });
   // Movimiento lento y con inercia: el progreso sigue al scroll con un muelle suave
   const smooth = useSpring(scrollYProgress, { stiffness: 45, damping: 22, mass: 0.8 });
-  const still = useMotionValue(0.55);
-  const p = reduce ? still : smooth;
+  // Con «reducir movimiento» la escena sigue al scroll (movimiento controlado por el usuario),
+  // sin muelle ni animaciones automáticas
+  const p = reduce ? scrollYProgress : smooth;
 
   // Cielo: amanecer → mediodía → atardecer → anochecer
   const skyTop = useTransform(p, [0, 0.35, 0.68, 1], ['#9BDDF8', '#62C6F1', '#3B6FA6', '#14305A']);
@@ -90,7 +90,8 @@ export default function Connection() {
   const veX = useTransform(p, [0.55, 0.95], [1300, 0]);
   const cloudsFar = useTransform(p, [0, 1], [0, -420]);
   const cloudsNear = useTransform(p, [0, 1], [120, -900]);
-  const shipX = useTransform(p, [0, 1], isMobile ? [0, 0] : [-70, 70]);
+  // En escritorio el barco cruza la pantalla: sale del puerto de Düsseldorf y llega a la costa venezolana
+  const shipX = useTransform(p, [0, 1], isMobile ? [-40, 40] : [-330, 480]);
   const planeX = useTransform(p, [0.3, 0.7], [-300, 1900]);
   const planeY = useTransform(p, [0.3, 0.7], [210, 120]);
   const birdsA = useTransform(p, [0, 0.3], [0, -500]);
@@ -98,7 +99,7 @@ export default function Connection() {
   const captionColor = useTransform(p, [0.5, 0.62], ['#04213A', '#FFFFFF']);
   const railFill = useTransform(p, [0, 1], [0, 1]);
 
-  const [active, setActive] = useState(reduce ? STEPS - 1 : 0);
+  const [active, setActive] = useState(0);
   useMotionValueEvent(p, 'change', (v) => {
     const i = Math.min(STEPS - 1, Math.max(0, Math.floor(v * STEPS)));
     setActive((cur) => (cur === i ? cur : i));
@@ -125,7 +126,7 @@ export default function Connection() {
         />
       </div>
 
-      <div ref={wrapRef} className={`voyage ${reduce ? 'voyage--static' : ''}`}>
+      <div ref={wrapRef} className="voyage">
         <div ref={sceneRef} className={`voyage__sticky ${onScreen ? '' : 'is-paused'}`}>
           {hasVideo ? (
             <CinematicVideo {...video} className="voyage__video" />
@@ -233,7 +234,7 @@ export default function Connection() {
           {/* Textos de cada etapa */}
           <m.div className="voyage__captions container" style={{ color: hasVideo ? '#FFFFFF' : captionColor }}>
             {connectionStory.map((step, i) =>
-              reduce ? null : <Caption key={step.label} p={p} i={i} step={step} last={i === STEPS - 1} />,
+              <Caption key={step.label} p={p} i={i} step={step} last={i === STEPS - 1} />,
             )}
           </m.div>
 
@@ -255,7 +256,7 @@ export default function Connection() {
       </div>
 
       {/* Texto accesible / versión sin movimiento */}
-      <ol className={`voyage__list container ${reduce ? 'is-visible' : 'visually-hidden'}`} role="list">
+      <ol className="voyage__list container visually-hidden" role="list">
         {connectionStory.map((s, i) => (
           <li key={s.label}>
             <span className="voyage__index">{String(i + 1).padStart(2, '0')}</span>
