@@ -8,10 +8,17 @@ import Connection from './components/Connection/Connection';
 import Stats from './components/Stats/Stats';
 import WhatsAppButton from './components/WhatsAppButton/WhatsAppButton';
 import DeferredSection from './components/ui/DeferredSection';
+import WaveDivider from './components/ui/WaveDivider';
 import ScrollProgress from './components/ScrollProgress/ScrollProgress';
 import MobileActionBar from './components/MobileActionBar/MobileActionBar';
 import { initAnchorNavigation, initSmoothScroll } from './lib/scroll';
 
+
+// Fondos de las secciones (para las olas de transición)
+const NAVY = 'var(--navy-900)';
+const DEEP = 'var(--navy-950)';
+const LIGHT = 'var(--gray-50)';
+const WHITE = 'var(--white)';
 
 // Code splitting: todo lo que está bajo el primer pliegue se carga en chunks aparte.
 const Distance = lazy(() => import('./components/Distance/Distance'));
@@ -57,12 +64,15 @@ export default function App() {
           <Distance />
         </DeferredSection>
         <Stats />
+        <WaveDivider from={NAVY} to={LIGHT} />
         <DeferredSection id="servicios">
           <Services />
         </DeferredSection>
+        <WaveDivider from={LIGHT} to={NAVY} />
         <DeferredSection minHeight="180px">
           <Marquee />
         </DeferredSection>
+        <WaveDivider from={NAVY} to={WHITE} />
         <DeferredSection id="envios">
           <ShippingComparison />
         </DeferredSection>
@@ -75,12 +85,16 @@ export default function App() {
         <DeferredSection id="como-funciona">
           <HowItWorks />
         </DeferredSection>
+        <WaveDivider from={LIGHT} to={DEEP} />
         <DeferredSection id="ruta">
           <RouteMap />
         </DeferredSection>
+        <WaveDivider from={DEEP} to={WHITE} />
         <DeferredSection id="nosotros">
           <About />
+          <WaveDivider from={WHITE} to={NAVY} />
           <WhyTucargo />
+          <WaveDivider from={NAVY} to={LIGHT} />
           <Testimonials />
         </DeferredSection>
         <DeferredSection id="contacto">
@@ -93,6 +107,7 @@ export default function App() {
           <Instagram />
         </DeferredSection>
       </main>
+      <WaveDivider from={WHITE} to={DEEP} />
       <DeferredSection minHeight="40vh">
         <Footer />
       </DeferredSection>

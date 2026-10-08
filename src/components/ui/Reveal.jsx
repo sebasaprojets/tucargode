@@ -51,11 +51,12 @@ export default function Reveal({
 }
 
 /** Contenedor con stagger para hijos <RevealItem>. */
-export function RevealGroup({ as = 'div', stagger = 0.08, delay = 0, amount = 0.15, className, children, ...rest }) {
+export function RevealGroup({ as = 'div', stagger = 0.08, delay = 0, amount = 0.15, className, innerRef, children, ...rest }) {
   const reduce = useReduceMotion();
   const Comp = m[as] ?? m.div;
   return (
     <Comp
+      ref={innerRef}
       className={className}
       initial={reduce ? false : 'hidden'}
       whileInView="show"

@@ -1,7 +1,10 @@
+import { useRef } from 'react';
 import { Calculator, MessageCircle } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import ServiceCard from '../ServiceCard/ServiceCard';
 import Button from '../ui/Button';
+import CarouselDots from '../ui/CarouselDots';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { RevealGroup, RevealItem } from '../ui/Reveal';
 import { services } from '../../data/services';
 import { shippingModes, rateZones } from '../../data/shippingRates';
@@ -26,6 +29,9 @@ const HIGHLIGHTS = {
 };
 
 export default function Services() {
+  const gridRef = useRef(null);
+  // En móvil el mosaico se convierte en un carrusel deslizable
+  const carousel = useMediaQuery('(max-width: 679px)');
   return (
     <section className="services section theme-light" aria-labelledby="services-title">
       <div className="container">
@@ -35,13 +41,14 @@ export default function Services() {
           title="Todo lo que necesitas para enviar"
           lead="Una sola empresa para recoger, preparar, transportar y coordinar la entrega de tu carga en Venezuela."
         />
-        <RevealGroup className="services__grid" stagger={0.07}>
+        <RevealGroup innerRef={gridRef} className={`services__grid ${carousel ? 'snap-carousel' : ''}`} stagger={0.07}>
           {services.map((s, i) => (
             <RevealItem key={s.id} className={`services__cell services__cell--${s.id}`}>
               <ServiceCard service={s} index={i} variant={FEATURED[s.id]} highlights={HIGHLIGHTS[s.id]} />
             </RevealItem>
           ))}
         </RevealGroup>
+        {carousel && <CarouselDots scrollerRef={gridRef} label="Ver servicio" />}
         <div className="services__footer">
           <p>¿No sabes qué servicio necesitas? Te asesoramos sin compromiso.</p>
           <div className="services__actions">

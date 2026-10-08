@@ -14,8 +14,8 @@ export function initOffscreenPause() {
   );
   const seen = new WeakSet();
   const watch = (root) => {
-    const list = root.matches?.('section, footer') ? [root] : [];
-    root.querySelectorAll?.('section, footer').forEach((el) => list.push(el));
+    const list = root.matches?.('section, footer, .wave-divider') ? [root] : [];
+    root.querySelectorAll?.('section, footer, .wave-divider').forEach((el) => list.push(el));
     for (const el of list) {
       if (seen.has(el)) continue;
       seen.add(el);

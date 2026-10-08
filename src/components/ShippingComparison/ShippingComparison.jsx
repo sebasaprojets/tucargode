@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Plane, Ship, Check, Sparkles } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import Reveal from '../ui/Reveal';
 import Button from '../ui/Button';
 import Magnetic from '../ui/Magnetic';
+import CarouselDots from '../ui/CarouselDots';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import ShippingAssistant from './ShippingAssistant';
 import { comparison } from '../../data/content';
 import './ShippingComparison.css';
@@ -38,6 +40,9 @@ function ModeCard({ data, icon: Icon, variant }) {
 
 export default function ShippingComparison() {
   const [open, setOpen] = useState(false);
+  const gridRef = useRef(null);
+  // En móvil las dos tarjetas se deslizan lado a lado (carrusel)
+  const carousel = useMediaQuery('(max-width: 639px)');
   return (
     <section className="comparison section theme-white" aria-labelledby="comparison-title">
       <div className="container">
@@ -48,7 +53,7 @@ export default function ShippingComparison() {
           lead="Dos formas de cruzar el Atlántico. Compara y elige la que mejor encaja con tu carga y tus tiempos."
           align="center"
         />
-        <div className="comparison__grid">
+        <div ref={gridRef} className={`comparison__grid ${carousel ? 'snap-carousel' : ''}`}>
           <Reveal variant="left">
             <ModeCard data={comparison.air} icon={Plane} variant="air" />
           </Reveal>
@@ -59,6 +64,7 @@ export default function ShippingComparison() {
             <ModeCard data={comparison.sea} icon={Ship} variant="sea" />
           </Reveal>
         </div>
+        {carousel && <CarouselDots scrollerRef={gridRef} label="Ver opción" />}
         <Reveal className="comparison__cta" delay={0.1}>
           <Magnetic>
             <Button variant="primary" size="lg" onClick={() => setOpen(true)} iconLeft={<Sparkles size={18} aria-hidden="true" />}>

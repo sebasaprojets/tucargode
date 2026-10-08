@@ -1,0 +1,24 @@
+.wave-divider {
+  position: relative;
+  height: clamp(40px, 5.5vw, 84px);
+  margin: -1px 0; /* sin líneas finas entre secciones */
+  overflow: hidden;
+  background: var(--to);
+  pointer-events: none;
+}
+.wave-divider__layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  max-width: none; /* la ola mide dos pantallas para poder derivar sin cortes */
+  height: 100%;
+}
+.wave-divider__layer--main path { fill: var(--from); }
+.wave-divider__layer--sea path { fill: var(--sea-500); opacity: 0.4; }
+/* Deriva lenta (solo en ordenadores; transform = sin repintar) */
+html.motion-ok .wave-divider__layer--main { animation: wave-drift 46s linear infinite; }
+html.motion-ok .wave-divider__layer--sea { animation: wave-drift 30s linear infinite reverse; }
+@keyframes wave-drift {
+  to { transform: translateX(-50%); }
+}

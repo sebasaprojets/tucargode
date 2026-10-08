@@ -159,3 +159,7 @@
 .assistant__summary { font-size: var(--text-caption); text-transform: uppercase; letter-spacing: 0.1em; }
 .assistant__disclaimer { margin: var(--space-md) 0; font-size: var(--text-caption); color: var(--color-text-secondary); }
 .assistant__actions { display: grid; gap: 10px; justify-items: center; }
+
+/* Carrusel en móvil: el «VS» sobra cuando las tarjetas se deslizan */
+.comparison__grid.snap-carousel .comparison__vs { display: none; }
+.comparison__grid.snap-carousel > * { flex-basis: 88%; }
