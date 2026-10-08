@@ -60,6 +60,15 @@
 }
 .voyage__sticky.is-paused * { animation-play-state: paused !important; }
 
+/* Escritorio: el barco atraviesa la escena solo, entra y sale con un fundido */
+html.motion-ok .voyage__sail { animation: voy-sail 34s linear infinite; }
+@keyframes voy-sail {
+  0% { transform: translateX(-640px); opacity: 0; }
+  7% { opacity: 1; }
+  93% { opacity: 1; }
+  100% { transform: translateX(640px); opacity: 0; }
+}
+
 /* Textos */
 .voyage__captions {
   position: absolute;

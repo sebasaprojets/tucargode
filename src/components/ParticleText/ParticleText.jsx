@@ -1,6 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { useMotionValueEvent } from 'framer-motion';
 import './ParticleText.css';
+
+// Reparto del progreso: el frente recorre el texto en SWEEP; cada partícula tarda DURATION en disolverse
+const SWEEP = 0.56;
+const DURATION = 0.4;
+const JITTER = 0.04;
 import { useReduceMotion } from '../../hooks/useMotionPreference';
 
 /**
@@ -104,15 +109,25 @@ export default function ParticleText({ targetRef, progress, wind = [1, -0.6], ga
               // dirección: viento + dispersión aleatoria; retardo por posición (efecto barrido)
               dx: (wind[0] + (Math.random() - 0.5) * 1.6) * (120 + seed * 260),
               dy: (wind[1] + (Math.random() - 0.5) * 1.6) * (120 + seed * 260),
-              delay: (x / w) * 0.35 + Math.random() * 0.15,
+              jitter: Math.random() * JITTER,
               s: step * (0.55 + Math.random() * 0.5),
             });
           }
         }
       }
+      // Barrido progresivo de derecha a izquierda: cada partícula empieza a
+      // deshacerse cuando el «frente» pasa por su posición
+      let minX = Infinity;
+      let maxX = -Infinity;
+      for (const q of parts) {
+        if (q.x < minX) minX = q.x;
+        if (q.x > maxX) maxX = q.x;
+      }
+      const span = Math.max(1, maxX - minX);
+      for (const q of parts) q.delay = (1 - (q.x - minX) / span) * SWEEP + q.jitter;
       // Agrupa por color para minimizar cambios de fillStyle
       parts.sort((a, b) => (a.c < b.c ? -1 : 1));
-      state.current = { particles: parts, w, h, dpr, last: -1 };
+      state.current = { particles: parts, w, h, dpr, last: -1, minX, span };
       draw(progress.get());
     };
 
@@ -144,15 +159,29 @@ export default function ParticleText({ targetRef, progress, wind = [1, -0.6], ga
     const ctx = canvas.getContext('2d');
     ctx.setTransform(st.dpr, 0, 0, st.dpr, 0, 0);
     ctx.clearRect(0, 0, st.w, st.h);
-    // Texto HTML visible mientras no hay dispersión; el canvas toma el relevo
+    const target = targetRef.current;
     const active = q > threshold;
     canvas.style.opacity = active ? '1' : '0';
-    if (targetRef.current) targetRef.current.style.opacity = active ? '0' : '';
-    if (!active) return;
+    if (!active) {
+      // Texto HTML entero y nítido
+      if (target) {
+        target.style.maskImage = '';
+        target.style.webkitMaskImage = '';
+      }
+      return;
+    }
+    // El texto HTML sigue sólido a la izquierda del frente; a la derecha ya es partículas
+    const frontN = 1 - q / SWEEP; // 1 → 0 a medida que avanza el progreso
+    const frontX = st.minX + frontN * st.span - pad; // en coordenadas del elemento
+    const mask = `linear-gradient(to right, #000 ${Math.round(frontX - 14)}px, transparent ${Math.round(frontX + 4)}px)`;
+    if (target) {
+      target.style.maskImage = mask;
+      target.style.webkitMaskImage = mask;
+    }
     let color = '';
     for (const pt of st.particles) {
-      const local = Math.min(1, Math.max(0, (q - pt.delay * 0.6) / (1 - pt.delay * 0.6)));
-      if (local >= 1) continue;
+      const local = (q - pt.delay) / DURATION;
+      if (local <= 0 || local >= 1) continue; // aún sólido (texto HTML) o ya disuelto
       const e = local * local * (3 - 2 * local); // suavizado
       const alpha = 1 - e;
       if (alpha <= 0.02) continue;

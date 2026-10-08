@@ -85,7 +85,7 @@ export default function Connection() {
   const cloudsFar = useTransform(p, [0, 1], [0, -420]);
   const cloudsNear = useTransform(p, [0, 1], [120, -900]);
   // En escritorio el barco cruza la pantalla: sale del puerto de Düsseldorf y llega a la costa venezolana
-  const shipX = useTransform(p, [0, 1], isMobile ? [-40, 40] : [-330, 480]);
+  const shipX = useTransform(p, [0, 1], isMobile ? [-40, 40] : [-110, 110]);
   const planeX = useTransform(p, [0.3, 0.7], [-300, 1900]);
   const planeY = useTransform(p, [0.3, 0.7], [210, 120]);
   const birdsA = useTransform(p, [0, 0.3], [0, -500]);
@@ -203,9 +203,12 @@ export default function Connection() {
               {/* Barco del logo, con balanceo lento */}
               <m.g style={{ x: shipX }}>
                 <g transform={`translate(800 ${HORIZON + 34}) scale(${isMobile ? 0.8 : 1})`}>
-                  <g className="voyage__bob">
-                    <Wake />
-                    <Ship />
+                  {/* En escritorio el barco cruza la escena por sí solo (bucle lento) */}
+                  <g className="voyage__sail">
+                    <g className="voyage__bob">
+                      <Wake />
+                      <Ship />
+                    </g>
                   </g>
                 </g>
               </m.g>
