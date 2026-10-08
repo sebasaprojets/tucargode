@@ -1,11 +1,30 @@
+import { siteConfig } from '../../config/siteConfig';
 import './Logo.css';
 
 /**
- * Logotipo provisional (wordmark + símbolo de ruta).
- * Para usar el logotipo oficial, coloca el archivo en /public/brand/ y
- * sustituye el <svg> por <img src="/brand/logo.svg" alt="Tucargo" />.
+ * Logotipo de Tucargo.
+ * Si hay un logo oficial configurado en siteConfig.brand.logo, se usa ese archivo;
+ * si no, se muestra el logotipo provisional (wordmark + símbolo de ruta).
+ * tone: 'dark' (sobre fondo oscuro) | 'light' (sobre fondo claro)
  */
-export default function Logo({ compact = false, className = '' }) {
+export default function Logo({ compact = false, tone = 'dark', className = '' }) {
+  const { logo } = siteConfig.brand;
+  const src = tone === 'light' ? logo.onLight || logo.onDark : logo.onDark || logo.onLight;
+
+  if (src) {
+    return (
+      <span className={`logo logo--official ${className}`}>
+        <img
+          src={`${import.meta.env.BASE_URL}${src}`}
+          alt={siteConfig.legalName}
+          height={logo.height}
+          style={{ height: logo.height, width: 'auto' }}
+          decoding="async"
+        />
+      </span>
+    );
+  }
+
   return (
     <span className={`logo ${className}`}>
       <svg className="logo__mark" viewBox="0 0 40 40" aria-hidden="true">

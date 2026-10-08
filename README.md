@@ -44,8 +44,20 @@ Os dados vêm do conteúdo publicado em tucargo.de (início, «¿Quiénes somos?
 - **Recargo aduanal 38,04 %** (vigente desde 08.07.2023) — confirmar se continua válido.
 - **Tarifa marítima**: não publicada → "Cotización personalizada".
 - **Depoimentos**: `testimonials` está vazio de propósito (nada inventado). Ao adicionar avaliações reais, a seção aparece automaticamente.
-- **Logo oficial**: o logo atual é provisório (`src/components/ui/Logo.jsx`). Basta trocar pelo arquivo oficial.
+- **Logo oficial**: ainda não foi possível obter o arquivo (veja "Logo oficial" abaixo). Enquanto isso aparece um logo provisório.
 - **Impressum / Datenschutz**: obrigatórios na Alemanha — preencher `legal` em `siteConfig.js`.
+
+## Logo oficial
+
+1. Coloque o arquivo em `public/brand/` — de preferência **SVG**, ou **PNG/WebP com fundo transparente** (mín. 600 px de largura). Ideal ter duas versões: uma **clara/branca** (para fundos escuros) e uma colorida.
+2. Em `src/config/siteConfig.js` → `brand.logo`, preencha `onDark` (ex.: `'brand/tucargo-logo-white.svg'`) e, se houver, `onLight`. Ajuste `height` se precisar.
+3. Header, menu mobile e rodapé passam a usar o logo oficial automaticamente. Para o favicon, substitua `public/favicon.svg`, `public/favicon-32.png` e `public/apple-touch-icon.png`.
+
+## Globo do hero
+
+- `src/components/Globe/` — globo interativo. Com WebGL usa texturas reais da Terra (`public/globe/`); sem WebGL, o globo de pontos.
+- Texturas: NASA Blue Marble / Black Marble (domínio público), via [three-globe](https://github.com/vasturiano/three-globe), convertidas para WebP 2048×1024.
+- Pontos de terra: Natural Earth (domínio público) via `world-atlas`. Para regenerar: `npm run globe:dots`.
 
 ## Deploy
 

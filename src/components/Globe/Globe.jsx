@@ -3,6 +3,7 @@ import { useReducedMotion } from 'framer-motion';
 import { Hand, LocateFixed } from 'lucide-react';
 import Flag from '../ui/Flag';
 import landDots from './landDots.json';
+import { createEarthRenderer } from './earthRenderer';
 import {
   DEG,
   toVec,
@@ -31,8 +32,26 @@ const T_HUD = 3700;
 const T_COUNT = 1500;
 const PLANE_PERIOD = 7000;
 
+const SHIP_PERIOD = 18000;
+const TEXTURES = {
+  day: `${import.meta.env.BASE_URL}globe/earth-day-2k.webp`,
+  night: `${import.meta.env.BASE_URL}globe/earth-night-2k.webp`,
+  water: `${import.meta.env.BASE_URL}globe/earth-water-1k.webp`,
+};
+/** Ruta marítima aproximada: Rin → Róterdam → Canal de la Mancha → Atlántico → Puerto Cabello. */
+const SEA_WAYPOINTS = [
+  [6.78, 51.22],
+  [4.3, 51.9],
+  [1.5, 51.0],
+  [-5.5, 49.2],
+  [-25, 38],
+  [-61.5, 15.5],
+  [-68.0, 10.47],
+];
+
 const ARC_SEGMENTS = 160;
 const ARC_LIFT = 0.3;
+const SHIP = new Path2D('M-7 -2.6 L5 -2.6 L8.5 0 L5 2.6 L-7 2.6 Z M-4.5 -1.4 L0.5 -1.4 L0.5 1.4 L-4.5 1.4 Z');
 const PLANE = new Path2D(
   'M-8 -1.1 L4 -1.1 Q9 -1 9.5 0 Q9 1 4 1.1 L-8 1.1 Z M1 -1 L-3.5 -8.5 L-1.2 -8.5 L5 -1 Z M1 1 L-3.5 8.5 L-1.2 8.5 L5 1 Z M-6 -1 L-8.5 -4.5 L-7 -4.5 L-3.5 -1 Z M-6 1 L-8.5 4.5 L-7 4.5 L-3.5 1 Z',
 );
@@ -73,10 +92,23 @@ function buildScene() {
     arc.push([v[0] * h, v[1] * h, v[2] * h]);
   }
 
+  // Ruta marítima sobre la superficie
+  const sea = [];
+  for (let k = 0; k < SEA_WAYPOINTS.length - 1; k++) {
+    const p = toVec(...SEA_WAYPOINTS[k]);
+    const q = toVec(...SEA_WAYPOINTS[k + 1]);
+    const ang = Math.acos(Math.max(-1, Math.min(1, p[0] * q[0] + p[1] * q[1] + p[2] * q[2])));
+    const steps = Math.max(2, Math.round(ang / (1.2 * DEG)));
+    for (let i = k === 0 ? 0 : 1; i <= steps; i++) {
+      const v = slerp(p, q, i / steps);
+      sea.push([v[0] * 1.004, v[1] * 1.004, v[2] * 1.004]);
+    }
+  }
+
   // Vista "home": desplazada al sureste del punto medio de la ruta para que el
   // arco no quede de frente (se ve curvado, con profundidad).
   const [midLon, midLat] = toLonLat(slerp(a, b, 0.5));
-  return { dots, flags, grat, arc, a, b, home: { lon: midLon + 14, lat: midLat - 14 } };
+  return { dots, flags, grat, arc, sea, a, b, home: { lon: midLon + 14, lat: midLat - 14 } };
 }
 
 const project = (v, cam) => [
@@ -96,6 +128,7 @@ const hidden = (x, y, z) => z < 0 && x * x + y * y < 1;
 export default function Globe() {
   const wrapRef = useRef(null);
   const canvasRef = useRef(null);
+  const glRef = useRef(null);
   const labelFrom = useRef(null);
   const labelTo = useRef(null);
   const badge = useRef(null);
@@ -137,6 +170,16 @@ export default function Globe() {
     let visible = true;
     let start = null;
     let lastCount = -1;
+    let glFadeStart = null;
+
+    // Tierra fotorrealista (WebGL). Si no hay WebGL, queda el globo de puntos.
+    const earth = glRef.current ? createEarthRenderer(glRef.current, TEXTURES) : null;
+    earth?.ready
+      .then(() => {
+        glFadeStart = performance.now();
+        kick();
+      })
+      .catch(() => {});
 
     const resize = () => {
       const r = wrap.getBoundingClientRect();
@@ -147,6 +190,7 @@ export default function Globe() {
       canvas.style.width = `${W}px`;
       canvas.style.height = `${H}px`;
       wrap.dataset.compact = String(W < 520);
+      earth?.resize(W, H, dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       kick();
     };
@@ -188,9 +232,20 @@ export default function Globe() {
       const cx = W / 2;
       const cy = H / 2;
       const alpha = clamp01(t / 900);
+      const glFade = earth?.usable && glFadeStart !== null ? (reduce ? 1 : easeInOutCubic(clamp01((now - glFadeStart) / 1100))) : 0;
+      const dotsAlpha = 1 - glFade;
+
+      if (glFade > 0) {
+        // Sol a la izquierda de la cámara: América de día, Europa en el crepúsculo con sus luces
+        const sx = -0.86;
+        const sy = 0.3;
+        const sz = 0.41;
+        const sun = [0, 1, 2].map((k) => sx * cam.e[k] + sy * cam.n[k] + sz * cam.c[k]);
+        earth.render({ cx, cy, R, cam, sun, alpha, H, dpr });
+      }
 
       ctx.clearRect(0, 0, W, H);
-      ctx.globalAlpha = alpha;
+      ctx.globalAlpha = alpha * dotsAlpha;
 
       // ---- Atmósfera ----
       let g = ctx.createRadialGradient(cx, cy, R * 0.92, cx, cy, R * 1.38);
@@ -210,7 +265,8 @@ export default function Globe() {
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.fill();
 
-      // ---- Graticule ----
+      // ---- Graticule (se mantiene tenue sobre la Tierra real: estética HUD) ----
+      ctx.globalAlpha = alpha * (dotsAlpha + glFade * 0.6);
       ctx.strokeStyle = 'rgba(139,189,244,0.07)';
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -230,6 +286,7 @@ export default function Globe() {
         }
       }
       ctx.stroke();
+      ctx.globalAlpha = alpha * dotsAlpha;
 
       // ---- Puntos de tierra (agrupados por profundidad) ----
       const buckets = [new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D()];
@@ -255,6 +312,8 @@ export default function Globe() {
         ctx.fillStyle = `rgba(139,189,244,${0.16 + b * 0.15})`;
         ctx.fill(buckets[b]);
       }
+      // Alemania y Venezuela siguen destacadas sobre la Tierra real
+      ctx.globalAlpha = alpha * (dotsAlpha + glFade * 0.4);
       ctx.shadowBlur = 8;
       ctx.shadowColor = 'rgba(255,255,255,0.8)';
       ctx.fillStyle = '#ffffff';
@@ -263,6 +322,7 @@ export default function Globe() {
       ctx.fillStyle = '#EF5B57';
       ctx.fill(ve);
       ctx.shadowBlur = 0;
+      ctx.globalAlpha = alpha * dotsAlpha;
 
       // ---- Sombreado de borde + luz de contorno ----
       g = ctx.createRadialGradient(cx - R * 0.2, cy - R * 0.25, R * 0.5, cx, cy, R);
@@ -272,11 +332,52 @@ export default function Globe() {
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.fill();
+      ctx.globalAlpha = alpha;
       ctx.strokeStyle = 'rgba(139,189,244,0.35)';
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
-      // ---- Ruta ----
+      // ---- Ruta marítima (punteada) + barco ----
+      const seaIn = reduce ? 1 : clamp01((t - T_ARC_START - T_ARC) / 900);
+      if (seaIn > 0) {
+        const seaPts = scene.sea.map((p) => {
+          const [x, y, z] = project(p, cam);
+          return [cx + R * x, cy - R * y, z < 0];
+        });
+        ctx.save();
+        ctx.globalAlpha = alpha * seaIn;
+        ctx.setLineDash([2, 6]);
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        let pen = false;
+        for (const [sx, sy, hid] of seaPts) {
+          if (hid) {
+            pen = false;
+            continue;
+          }
+          if (pen) ctx.lineTo(sx, sy);
+          else ctx.moveTo(sx, sy);
+          pen = true;
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+        const st = reduce ? 0.55 : ((t - T_ARC_START - T_ARC) % SHIP_PERIOD) / SHIP_PERIOD;
+        const si = Math.min(seaPts.length - 2, Math.floor(st * (seaPts.length - 1)));
+        const [shx, shy, shHid] = seaPts[si];
+        if (!shHid) {
+          ctx.translate(shx, shy);
+          ctx.rotate(Math.atan2(seaPts[si + 1][1] - shy, seaPts[si + 1][0] - shx));
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = 'rgba(139,189,244,1)';
+          ctx.fillStyle = '#ffffff';
+          ctx.fill(SHIP, 'evenodd');
+        }
+        ctx.restore();
+      }
+
+      // ---- Ruta aérea ----
       const prog = reduce ? 1 : easeInOutCubic(clamp01((t - T_ARC_START) / T_ARC));
       const pts = scene.arc.map((p) => {
         const [x, y, z] = project(p, cam);
@@ -424,6 +525,7 @@ export default function Globe() {
     return () => {
       running = false;
       cancelAnimationFrame(raf);
+      earth?.destroy();
       ro.disconnect();
       io.disconnect();
       document.removeEventListener('visibilitychange', onVis);
@@ -519,6 +621,7 @@ export default function Globe() {
         onPointerLeave={onPointerLeave}
         onKeyDown={onKeyDown}
       >
+        <canvas ref={glRef} className="globe__canvas" aria-hidden="true" />
         <canvas ref={canvasRef} className="globe__canvas" aria-hidden="true" />
 
         <div ref={labelFrom} className="globe__label globe__label--from" aria-hidden="true">

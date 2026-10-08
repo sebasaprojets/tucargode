@@ -28,3 +28,8 @@
   text-transform: uppercase;
   opacity: 0.6;
 }
+.logo--official img {
+  display: block;
+  max-width: 200px;
+  object-fit: contain;
+}
