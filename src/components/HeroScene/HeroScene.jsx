@@ -33,15 +33,15 @@ function CargoPlane() {
         <path d={TAIL_FIN} />
       </clipPath>
       <g clipPath="url(#hsTailClip)">
-        <rect x="440" y="-66" width="80" height="6" fill="#FFCC00" />
-        <rect x="440" y="-60" width="80" height="6" fill="#00247D" />
-        <rect x="440" y="-54" width="80" height="6" fill="#CF142B" />
+        <rect x="440" y="-74" width="80" height="10" fill="#FFD100" />
+        <rect x="440" y="-64" width="80" height="10" fill="#0033A0" />
+        <rect x="440" y="-54" width="80" height="10" fill="#E4002B" />
         {[-70, -50, -30, -10, 10, 30, 50, 70].map((a) => (
           <circle
             key={a}
-            cx={490 + 9 * Math.sin((a * Math.PI) / 180)}
-            cy={-55.4 - 3.2 * Math.cos((a * Math.PI) / 180)}
-            r="0.6"
+            cx={491 + 10 * Math.sin((a * Math.PI) / 180)}
+            cy={-57.4 - 4 * Math.cos((a * Math.PI) / 180)}
+            r="0.95"
             fill="#FFFFFF"
           />
         ))}
