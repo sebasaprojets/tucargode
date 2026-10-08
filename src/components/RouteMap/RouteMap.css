@@ -112,3 +112,8 @@
 @media (min-width: 768px) {
   .routemap__steps { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* En móvil el desenfoque del panel cuesta mucho al hacer scroll: fondo opaco */
+@media (max-width: 767px), (pointer: coarse) {
+  .routemap__info { background: rgba(4, 33, 58, 0.94); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}

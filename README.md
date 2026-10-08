@@ -33,7 +33,6 @@ Os preços **nunca** ficam espalhados nos componentes — tudo é lido de `shipp
 Copie `.env.example` para `.env` e preencha:
 
 - **Formulário de cotação** — `VITE_FORM_PROVIDER` = `formspree` | `emailjs` | `supabase` | `api`. Sem provedor, o formulário abre o WhatsApp com a solicitação já redigida.
-- **Rastreamento** — `VITE_TRACKING_API_URL`. Sem API, a busca mostra um aviso honesto e oferece consulta via WhatsApp com o número já preenchido.
 
 ## Fontes dos dados
 

@@ -36,25 +36,28 @@
 }
 
 /* Movimientos lentos (solo transform: compositor) */
-.voyage__wave path { will-change: transform; }
-.voyage__wave--back path { animation: voy-wave 26s linear infinite; }
-.voyage__wave--mid path { animation: voy-wave 18s linear infinite reverse; }
-.voyage__wave--front path { animation: voy-wave 12s linear infinite; }
+/* Animaciones continuas de la escena (olas, balanceo, nubes): solo en ordenadores.
+   La escena es un único SVG grande y cada cuadro animado obliga a repintarlo
+   entero; en móvil y tablet la escena se mueve solo con el scroll. */
+html.motion-ok .voyage__wave path { will-change: transform; }
+html.motion-ok .voyage__wave--back path { animation: voy-wave 26s linear infinite; }
+html.motion-ok .voyage__wave--mid path { animation: voy-wave 18s linear infinite reverse; }
+html.motion-ok .voyage__wave--front path { animation: voy-wave 12s linear infinite; }
 @keyframes voy-wave {
   to { transform: translateX(-1600px); }
 }
 .voyage__bob {
   transform-box: fill-box;
   transform-origin: 50% 80%;
-  animation: voy-bob 6.5s ease-in-out infinite;
 }
+html.motion-ok .voyage__bob { animation: voy-bob 6.5s ease-in-out infinite; }
 @keyframes voy-bob {
   0%, 100% { transform: translateY(0) rotate(-1.2deg); }
   50% { transform: translateY(-7px) rotate(1.4deg); }
 }
-.voyage__drift > g { animation: voy-drift 40s ease-in-out infinite alternate; }
-.voyage__drift--slow > g { animation-duration: 60s; }
-.voyage__drift > g:nth-child(2n) { animation-delay: -12s; }
+html.motion-ok .voyage__drift > g { animation: voy-drift 40s ease-in-out infinite alternate; }
+html.motion-ok .voyage__drift--slow > g { animation-duration: 60s; }
+html.motion-ok .voyage__drift > g:nth-child(2n) { animation-delay: -12s; }
 @keyframes voy-drift {
   to { translate: -60px 6px; }
 }

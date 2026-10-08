@@ -4,6 +4,7 @@ import './styles/fonts.css';
 import './styles/global.css';
 import App from './App';
 import { DESKTOP_MOTION_QUERY } from './hooks/useMotionPreference';
+import { initOffscreenPause } from './lib/offscreen';
 
 // En escritorio las animaciones ambientales se mantienen siempre (ver useMotionPreference)
 const motionQuery = window.matchMedia(DESKTOP_MOTION_QUERY);
@@ -16,3 +17,5 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 );
+
+initOffscreenPause();

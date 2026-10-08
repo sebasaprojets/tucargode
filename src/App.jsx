@@ -21,7 +21,6 @@ const ShippingComparison = lazy(() => import('./components/ShippingComparison/Sh
 const Rates = lazy(() => import('./components/Rates/Rates'));
 const ShippingCalculator = lazy(() => import('./components/ShippingCalculator/ShippingCalculator'));
 const HowItWorks = lazy(() => import('./components/HowItWorks/HowItWorks'));
-const Tracking = lazy(() => import('./components/Tracking/Tracking'));
 const RouteMap = lazy(() => import('./components/RouteMap/RouteMap'));
 const About = lazy(() => import('./components/About/About'));
 const WhyTucargo = lazy(() => import('./components/WhyTucargo/WhyTucargo'));
@@ -75,9 +74,6 @@ export default function App() {
         </DeferredSection>
         <DeferredSection id="como-funciona">
           <HowItWorks />
-        </DeferredSection>
-        <DeferredSection id="seguimiento">
-          <Tracking />
         </DeferredSection>
         <DeferredSection id="ruta">
           <RouteMap />
