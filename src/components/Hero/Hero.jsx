@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { lazy, Suspense, useRef } from 'react';
 import {
   motion,
   useMotionValue,
@@ -11,8 +11,10 @@ import { ArrowRight, Calculator, Plane, Ship, Truck, ArrowDown } from 'lucide-re
 import Button from '../ui/Button';
 import SplitText from '../ui/SplitText';
 import Particles from '../ui/Particles';
-import RouteAnimation from '../RouteAnimation/RouteAnimation';
 import { useIsMobile, useCanHover } from '../../hooks/useMediaQuery';
+
+// El globo (canvas + datos del mapa) va en un chunk propio: el texto del hero pinta primero.
+const Globe = lazy(() => import('../Globe/Globe'));
 import { shippingModes, rateZones } from '../../data/shippingRates';
 import { siteConfig } from '../../config/siteConfig';
 import './Hero.css';
@@ -38,8 +40,6 @@ export default function Hero() {
   const sy = useSpring(my, { stiffness: 40, damping: 18 });
   const bgX = useTransform(sx, (v) => v * -12);
   const bgYm = useTransform(sy, (v) => v * -8);
-  const midX = useTransform(sx, (v) => v * 18);
-  const midY = useTransform(sy, (v) => v * 12);
   const fgX = useTransform(sx, (v) => v * 32);
   const fgY = useTransform(sy, (v) => v * 22);
 
@@ -136,15 +136,17 @@ export default function Hero() {
           </motion.ul>
         </motion.div>
 
-        {/* MIDDLE-GROUND — ruta */}
+        {/* MIDDLE-GROUND — el mundo */}
         <motion.div
           className="hero__scene"
-          style={isMobile ? undefined : { x: midX, y: midY, scale: sceneScale }}
-          initial={reduce ? false : { opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.6, ease, delay: 0.3 }}
+          style={isMobile ? undefined : { scale: sceneScale }}
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, ease, delay: 0.2 }}
         >
-          <RouteAnimation orientation={isMobile ? 'vertical' : 'diagonal'} />
+          <Suspense fallback={<div className="globe-fallback" aria-hidden="true" />}>
+            <Globe />
+          </Suspense>
 
           {!isMobile && (
             <motion.div
@@ -152,7 +154,7 @@ export default function Hero() {
               style={{ x: fgX, y: fgY }}
               initial={reduce ? false : { opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease, delay: 1.4 }}
+              transition={{ duration: 1, ease, delay: 3.9 }}
             >
               <p className="hero__card-title">
                 <span className="hero__live" aria-hidden="true" /> Ruta DUS → VE
