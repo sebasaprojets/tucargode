@@ -29,7 +29,7 @@
   position: relative;
   border-radius: var(--radius-xl);
   border: 1px solid var(--line);
-  background: radial-gradient(80% 80% at 70% 20%, rgba(11, 93, 183, 0.18), transparent 70%), var(--navy-900);
+  background: radial-gradient(80% 80% at 70% 20%, rgba(1, 157, 216, 0.18), transparent 70%), var(--navy-900);
   overflow: hidden;
 }
 .routemap__svg { width: 100%; height: auto; aspect-ratio: 120 / 74; }
@@ -38,7 +38,7 @@
 }
 .routemap__dots {
   fill: none;
-  stroke: rgba(139, 189, 244, 0.42);
+  stroke: rgba(127, 214, 248, 0.42);
   stroke-width: 4;
   stroke-linecap: round;
 }
@@ -47,16 +47,16 @@
 .routemap__route--sea { stroke-width: 3; stroke-dasharray: 2 10; }
 .routemap__route--ghost { stroke: rgba(255, 255, 255, 0.12); stroke-width: 1.5; stroke-dasharray: 4 8; }
 .routemap__svg.is-hover .routemap__route--air,
-.routemap__svg.is-hover .routemap__route--sea { stroke-width: 5; filter: drop-shadow(0 0 8px rgba(76, 147, 230, 0.8)); }
+.routemap__svg.is-hover .routemap__route--sea { stroke-width: 5; filter: drop-shadow(0 0 8px rgba(1, 185, 255, 0.8)); }
 .routemap__hit { fill: none; stroke: transparent; stroke-width: 36; cursor: pointer; pointer-events: stroke; }
-.routemap__traveler { fill: #fff; filter: drop-shadow(0 0 6px rgba(139, 189, 244, 1)); }
+.routemap__traveler { fill: #fff; filter: drop-shadow(0 0 6px rgba(127, 214, 248, 1)); }
 .routemap__node { fill: #fff; stroke: var(--color-primary); stroke-width: 3; }
 .routemap__node--dest { fill: var(--color-accent); stroke: #fff; }
-.routemap__ping { fill: none; stroke: #8BBDF4; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: route-pulse 2.6s var(--ease-out) infinite; }
-.routemap__ping--dest { stroke: #EF5B57; animation-delay: 1.3s; }
+.routemap__ping { fill: none; stroke: #7FD6F8; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: route-pulse 2.6s var(--ease-out) infinite; }
+.routemap__ping--dest { stroke: #E06B65; animation-delay: 1.3s; }
 .routemap__city circle { fill: rgba(255, 255, 255, 0.85); }
 .routemap__label { font-family: var(--font-heading); font-weight: 800; font-size: 18px; letter-spacing: 0.24em; fill: rgba(255, 255, 255, 0.9); paint-order: stroke; stroke: var(--navy-900); stroke-width: 6px; }
-.routemap__label--region { fill: rgba(139, 189, 244, 0.7); font-size: 14px; letter-spacing: 0.4em; }
+.routemap__label--region { fill: rgba(127, 214, 248, 0.7); font-size: 14px; letter-spacing: 0.4em; }
 .routemap__label--dest { fill: #fff; }
 @media (max-width: 767px) {
   .routemap__label { font-size: 26px; }
@@ -70,13 +70,13 @@
   max-width: 300px;
   padding: 14px 16px;
   border-radius: var(--radius-md);
-  background: rgba(6, 26, 47, 0.8);
+  background: rgba(4, 33, 58, 0.8);
   border: 1px solid var(--line);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: border-color var(--transition-normal), transform var(--transition-normal);
 }
-.routemap__info.is-hover { border-color: rgba(76, 147, 230, 0.6); transform: translateY(-4px); }
+.routemap__info.is-hover { border-color: rgba(1, 185, 255, 0.6); transform: translateY(-4px); }
 .routemap__info-mode { display: flex; align-items: center; gap: 8px; font-size: var(--text-caption); text-transform: uppercase; letter-spacing: 0.12em; color: var(--blue-300); }
 .routemap__info-text { margin-top: 4px; font-family: var(--font-heading); font-weight: 700; }
 .routemap__info-end { margin-top: 2px; font-size: var(--text-caption); color: var(--fg-muted); }

@@ -12,8 +12,8 @@
     box-shadow var(--transition-normal),
     border-color var(--transition-normal);
 }
-.service-card::before { background: radial-gradient(380px circle at var(--mx) var(--my), rgba(11, 93, 183, 0.07), transparent 50%); }
-.service-card::after { background: radial-gradient(240px circle at var(--mx) var(--my), rgba(11, 93, 183, 0.55), transparent 60%); }
+.service-card::before { background: radial-gradient(380px circle at var(--mx) var(--my), rgba(1, 157, 216, 0.07), transparent 50%); }
+.service-card::after { background: radial-gradient(240px circle at var(--mx) var(--my), rgba(1, 157, 216, 0.55), transparent 60%); }
 @media (hover: hover) {
   .service-card:hover {
     transform: translateY(-6px);

@@ -249,17 +249,17 @@ export default function Globe() {
 
       // ---- Atmósfera ----
       let g = ctx.createRadialGradient(cx, cy, R * 0.92, cx, cy, R * 1.38);
-      g.addColorStop(0, 'rgba(76,147,230,0.32)');
-      g.addColorStop(0.35, 'rgba(76,147,230,0.1)');
-      g.addColorStop(1, 'rgba(76,147,230,0)');
+      g.addColorStop(0, 'rgba(1,185,255,0.32)');
+      g.addColorStop(0.35, 'rgba(1,185,255,0.1)');
+      g.addColorStop(1, 'rgba(1,185,255,0)');
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
 
       // ---- Esfera ----
       g = ctx.createRadialGradient(cx - R * 0.38, cy - R * 0.45, R * 0.05, cx, cy, R * 1.05);
-      g.addColorStop(0, '#174a80');
-      g.addColorStop(0.45, '#0b2a4b');
-      g.addColorStop(1, '#030e1a');
+      g.addColorStop(0, '#0A4D78');
+      g.addColorStop(0.45, '#06304F');
+      g.addColorStop(1, '#02121F');
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
@@ -267,7 +267,7 @@ export default function Globe() {
 
       // ---- Graticule (se mantiene tenue sobre la Tierra real: estética HUD) ----
       ctx.globalAlpha = alpha * (dotsAlpha + glFade * 0.6);
-      ctx.strokeStyle = 'rgba(139,189,244,0.07)';
+      ctx.strokeStyle = 'rgba(127,214,248,0.07)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (const line of scene.grat) {
@@ -309,7 +309,7 @@ export default function Globe() {
         path.arc(sx, sy, r, 0, Math.PI * 2);
       }
       for (let b = 0; b < 5; b++) {
-        ctx.fillStyle = `rgba(139,189,244,${0.16 + b * 0.15})`;
+        ctx.fillStyle = `rgba(127,214,248,${0.16 + b * 0.15})`;
         ctx.fill(buckets[b]);
       }
       // Alemania y Venezuela siguen destacadas sobre la Tierra real
@@ -318,22 +318,22 @@ export default function Globe() {
       ctx.shadowColor = 'rgba(255,255,255,0.8)';
       ctx.fillStyle = '#ffffff';
       ctx.fill(de);
-      ctx.shadowColor = 'rgba(239,91,87,0.9)';
-      ctx.fillStyle = '#EF5B57';
+      ctx.shadowColor = 'rgba(224,107,101,0.9)';
+      ctx.fillStyle = '#E06B65';
       ctx.fill(ve);
       ctx.shadowBlur = 0;
       ctx.globalAlpha = alpha * dotsAlpha;
 
       // ---- Sombreado de borde + luz de contorno ----
       g = ctx.createRadialGradient(cx - R * 0.2, cy - R * 0.25, R * 0.5, cx, cy, R);
-      g.addColorStop(0, 'rgba(3,14,26,0)');
-      g.addColorStop(1, 'rgba(3,14,26,0.6)');
+      g.addColorStop(0, 'rgba(2,18,31,0)');
+      g.addColorStop(1, 'rgba(2,18,31,0.6)');
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.fill();
       ctx.globalAlpha = alpha;
-      ctx.strokeStyle = 'rgba(139,189,244,0.35)';
+      ctx.strokeStyle = 'rgba(127,214,248,0.35)';
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
@@ -370,7 +370,7 @@ export default function Globe() {
           ctx.translate(shx, shy);
           ctx.rotate(Math.atan2(seaPts[si + 1][1] - shy, seaPts[si + 1][0] - shx));
           ctx.shadowBlur = 10;
-          ctx.shadowColor = 'rgba(139,189,244,1)';
+          ctx.shadowColor = 'rgba(127,214,248,1)';
           ctx.fillStyle = '#ffffff';
           ctx.fill(SHIP, 'evenodd');
         }
@@ -386,9 +386,9 @@ export default function Globe() {
       const last = Math.floor(prog * ARC_SEGMENTS);
       if (last > 0) {
         const grad = ctx.createLinearGradient(pts[0][0], pts[0][1], pts[ARC_SEGMENTS][0], pts[ARC_SEGMENTS][1]);
-        grad.addColorStop(0, '#8BBDF4');
-        grad.addColorStop(0.6, '#4C93E6');
-        grad.addColorStop(1, '#E53935');
+        grad.addColorStop(0, '#7FD6F8');
+        grad.addColorStop(0.6, '#01B9FF');
+        grad.addColorStop(1, '#CC4D47');
         const routePath = new Path2D();
         let pen = false;
         for (let i = 0; i <= last; i++) {
@@ -402,7 +402,7 @@ export default function Globe() {
           pen = true;
         }
         ctx.lineCap = 'round';
-        ctx.strokeStyle = 'rgba(76,147,230,0.25)';
+        ctx.strokeStyle = 'rgba(1,185,255,0.25)';
         ctx.lineWidth = 7;
         ctx.stroke(routePath);
         ctx.strokeStyle = grad;
@@ -431,8 +431,8 @@ export default function Globe() {
         ctx.fill();
         return [sx, sy, true];
       };
-      const mFrom = marker(scene.a, '#ffffff', 'rgba(139,189,244,A)', 0);
-      const mTo = prog > 0.98 ? marker(scene.b, '#E53935', 'rgba(239,91,87,A)', 0.5) : [0, 0, false];
+      const mFrom = marker(scene.a, '#ffffff', 'rgba(127,214,248,A)', 0);
+      const mTo = prog > 0.98 ? marker(scene.b, '#CC4D47', 'rgba(224,107,101,A)', 0.5) : [0, 0, false];
 
       // ---- Avión ----
       if (prog >= 1) {
@@ -458,7 +458,7 @@ export default function Globe() {
           ctx.rotate(Math.atan2(ny - py, nx - px));
           ctx.scale(1.15, 1.15);
           ctx.shadowBlur = 12;
-          ctx.shadowColor = 'rgba(139,189,244,1)';
+          ctx.shadowColor = 'rgba(127,214,248,1)';
           ctx.fillStyle = '#ffffff';
           ctx.fill(PLANE);
           ctx.restore();

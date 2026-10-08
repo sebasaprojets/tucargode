@@ -44,14 +44,13 @@ Os dados vêm do conteúdo publicado em tucargo.de (início, «¿Quiénes somos?
 - **Recargo aduanal 38,04 %** (vigente desde 08.07.2023) — confirmar se continua válido.
 - **Tarifa marítima**: não publicada → "Cotización personalizada".
 - **Depoimentos**: `testimonials` está vazio de propósito (nada inventado). Ao adicionar avaliações reais, a seção aparece automaticamente.
-- **Logo oficial**: ainda não foi possível obter o arquivo (veja "Logo oficial" abaixo). Enquanto isso aparece um logo provisório.
 - **Impressum / Datenschutz**: obrigatórios na Alemanha — preencher `legal` em `siteConfig.js`.
 
-## Logo oficial
+## Logo e cores da marca
 
-1. Coloque o arquivo em `public/brand/` — de preferência **SVG**, ou **PNG/WebP com fundo transparente** (mín. 600 px de largura). Ideal ter duas versões: uma **clara/branca** (para fundos escuros) e uma colorida.
-2. Em `src/config/siteConfig.js` → `brand.logo`, preencha `onDark` (ex.: `'brand/tucargo-logo-white.svg'`) e, se houver, `onLight`. Ajuste `height` se precisar.
-3. Header, menu mobile e rodapé passam a usar o logo oficial automaticamente. Para o favicon, substitua `public/favicon.svg`, `public/favicon-32.png` e `public/apple-touch-icon.png`.
+- Logo oficial (insígnia circular com o navio) em `public/brand/`: original recortado com fundo transparente (`tucargo-logo.png`) e versões 128/256/512 em WebP/PNG. Favicons (`favicon.ico`, `favicon-32.png`, `apple-touch-icon.png`, `icon-192/512.png`) gerados a partir dele.
+- A paleta do site vem do logo (`src/styles/tokens.css`): mar `#019DD8`/`#01B9FF`, céu `#E1F5FE`, casco `#CC4D47`, carga `#7A664D`/`#A6875F`. Para textos e botões com fundo de cor usam-se versões mais profundas (`#0077A8`, `#C2423C`) que cumprem contraste AA.
+- Para trocar o logo: substitua os arquivos mantendo os nomes (ou ajuste `siteConfig.brand.logo`).
 
 ## Globo do hero
 

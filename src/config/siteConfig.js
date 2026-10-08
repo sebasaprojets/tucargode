@@ -17,17 +17,14 @@ export const siteConfig = {
   tagline: 'De Alemania a Venezuela. Tu carga, en buenas manos.',
 
   /**
-   * Logo oficial. Coloca los archivos en /public/brand/ y escribe aquí el nombre.
-   * - onDark: versión para fondos oscuros (header, menú, footer). Idealmente blanca/clara con fondo transparente.
-   * - onLight: versión para fondos claros (opcional).
-   * Formatos recomendados: SVG, o PNG/WebP transparente de al menos 600 px de ancho.
-   * Mientras sea null, se muestra el logotipo provisional.
+   * Logo oficial (insignia circular con el barco). Archivos en /public/brand/.
+   * Si se cambia el logo, regenerar las versiones con el mismo nombre.
    */
   brand: {
     logo: {
-      onDark: null, // p. ej. 'brand/tucargo-logo-white.svg'
-      onLight: null, // p. ej. 'brand/tucargo-logo.svg'
-      height: 40, // alto en px en el header
+      webp: { 128: 'brand/tucargo-logo-128.webp', 256: 'brand/tucargo-logo-256.webp', 512: 'brand/tucargo-logo-512.webp' },
+      png: 'brand/tucargo-logo-256.png',
+      showWordmark: true, // muestra «TUCARGO / Düsseldorf» junto a la insignia
     },
   },
 

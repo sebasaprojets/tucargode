@@ -28,7 +28,7 @@ export default function Footer() {
 
         <div className="footer__grid">
           <div className="footer__brand">
-            <Logo />
+            <Logo size={72} />
             <p>Envíos aéreos y marítimos de Alemania a Venezuela desde {siteConfig.foundedYear}. Puerta a puerta, con atención personalizada.</p>
             <div className="footer__social">
               <a href={social.instagram.url} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${social.instagram.handle}`}>

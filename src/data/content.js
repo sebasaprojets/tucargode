@@ -122,13 +122,13 @@ export const testimonials = [];
 /**
  * Composición visual de Instagram. Son piezas gráficas inspiradas en la
  * identidad de @tucargode (no publicaciones reales). Para mostrar fotos
- * reales, añade `image` con la ruta en /public/instagram/.
+ * reales, añade `image` con la ruta relativa dentro de /public.
  */
 export const instagramTiles = [
-  { id: 1, kind: 'route', title: 'Alemania → Venezuela', image: null },
-  { id: 2, kind: 'air', title: 'Aéreo', image: null },
-  { id: 3, kind: 'sea', title: 'Marítimo', image: null },
-  { id: 4, kind: 'container', title: 'Carga consolidada', image: null },
-  { id: 5, kind: 'family', title: 'Para tu familia', image: null },
-  { id: 6, kind: 'door', title: 'Puerta a puerta', image: null },
+  { id: 1, kind: 'brand', title: 'Tucargo Düsseldorf', image: 'brand/tucargo-logo-256.webp' },
+  { id: 2, kind: 'route', title: 'Alemania → Venezuela', image: null },
+  { id: 3, kind: 'air', title: 'Aéreo', image: null },
+  { id: 4, kind: 'sea', title: 'Marítimo', image: null },
+  { id: 5, kind: 'container', title: 'Carga consolidada', image: null },
+  { id: 6, kind: 'family', title: 'Para tu familia', image: null },
 ];

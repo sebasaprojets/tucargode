@@ -124,7 +124,7 @@
 .segmented__option input:checked + .segmented__label {
   background: var(--color-primary);
   color: var(--white);
-  box-shadow: 0 6px 16px -8px rgba(11, 93, 183, 0.8);
+  box-shadow: 0 6px 16px -8px rgba(1, 157, 216, 0.8);
 }
 .segmented__option input:focus-visible + .segmented__label { box-shadow: var(--shadow-focus); }
 

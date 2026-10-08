@@ -1,4 +1,4 @@
-import { Plane, Ship, Container, Heart, House, ArrowRight } from 'lucide-react';
+import { Plane, Ship, Container, Heart, ArrowRight } from 'lucide-react';
 import SectionHeader from '../ui/SectionHeader';
 import Button from '../ui/Button';
 import { RevealGroup, RevealItem } from '../ui/Reveal';
@@ -8,10 +8,25 @@ import { instagramTiles } from '../../data/content';
 import { siteConfig } from '../../config/siteConfig';
 import './Instagram.css';
 
-const tileIcons = { air: Plane, sea: Ship, container: Container, family: Heart, door: House };
+const tileIcons = { air: Plane, sea: Ship, container: Container, family: Heart };
 
 function TileArt({ tile }) {
-  if (tile.image) return <img src={tile.image} alt={tile.title} loading="lazy" decoding="async" />;
+  if (tile.kind === 'brand') {
+    return (
+      <img
+        className="ig-tile__logo"
+        src={`${import.meta.env.BASE_URL}${tile.image}`}
+        alt=""
+        width="256"
+        height="256"
+        loading="lazy"
+        decoding="async"
+      />
+    );
+  }
+  if (tile.image) {
+    return <img src={`${import.meta.env.BASE_URL}${tile.image}`} alt={tile.title} loading="lazy" decoding="async" />;
+  }
   if (tile.kind === 'route') {
     return (
       <div className="ig-tile__route">

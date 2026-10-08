@@ -10,7 +10,7 @@
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(76, 147, 230, 0.14), transparent 45%);
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(1, 185, 255, 0.14), transparent 45%);
   opacity: 0;
   transition: opacity var(--transition-normal);
   pointer-events: none;
@@ -22,7 +22,7 @@
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: radial-gradient(260px circle at var(--mx) var(--my), rgba(76, 147, 230, 0.75), transparent 60%);
+  background: radial-gradient(260px circle at var(--mx) var(--my), rgba(1, 185, 255, 0.75), transparent 60%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;

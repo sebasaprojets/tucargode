@@ -51,7 +51,7 @@
   flex-direction: column;
   padding: clamp(1.25rem, 0.8rem + 2vw, 2.5rem);
   background:
-    radial-gradient(80% 60% at 100% 0%, rgba(11, 93, 183, 0.35), transparent 70%),
+    radial-gradient(80% 60% at 100% 0%, rgba(1, 157, 216, 0.35), transparent 70%),
     var(--navy-900);
   min-height: 420px;
 }
@@ -93,7 +93,7 @@
 .calc__weights > div { padding: 14px 16px; border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); }
 .calc__weights dt { display: flex; align-items: center; gap: 6px; font-size: var(--text-caption); color: var(--fg-muted); }
 .calc__weights dd { margin: 4px 0 0; font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
-.calc__billable { grid-column: 1 / -1; background: rgba(11, 93, 183, 0.25) !important; border-color: rgba(76, 147, 230, 0.4) !important; }
+.calc__billable { grid-column: 1 / -1; background: rgba(1, 157, 216, 0.25) !important; border-color: rgba(1, 185, 255, 0.4) !important; }
 .calc__billable dd { font-size: 2rem; }
 .calc__notes { display: grid; gap: 6px; padding: 0; font-size: var(--text-caption); color: var(--fg-muted); }
 .calc__notes:empty { display: none; }

@@ -35,7 +35,7 @@
   gap: 8px;
   padding: 6px 12px;
   border-radius: var(--radius-full);
-  background: rgba(6, 26, 47, 0.78);
+  background: rgba(4, 33, 58, 0.78);
   border: 1px solid rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -61,9 +61,9 @@
   align-items: center;
   padding: 8px 16px;
   border-radius: var(--radius-md);
-  background: linear-gradient(160deg, rgba(11, 93, 183, 0.9), rgba(8, 74, 146, 0.9));
-  border: 1px solid rgba(139, 189, 244, 0.45);
-  box-shadow: 0 0 0 6px rgba(11, 93, 183, 0.15), 0 16px 40px -12px rgba(11, 93, 183, 0.8);
+  background: linear-gradient(160deg, rgba(1, 157, 216, 0.9), rgba(0, 90, 133, 0.9));
+  border: 1px solid rgba(127, 214, 248, 0.45);
+  box-shadow: 0 0 0 6px rgba(1, 157, 216, 0.15), 0 16px 40px -12px rgba(1, 157, 216, 0.8);
   white-space: nowrap;
   color: var(--white);
 }
@@ -123,7 +123,7 @@
   padding: 0 14px;
   border-radius: var(--radius-full);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(6, 26, 47, 0.75);
+  background: rgba(4, 33, 58, 0.75);
   color: var(--white);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -139,7 +139,7 @@
   width: 100%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle at 38% 32%, #174a80, #0b2a4b 45%, #030e1a 75%, transparent 76%);
+  background: radial-gradient(circle at 38% 32%, #0A4D78, #06304F 45%, #02121F 75%, transparent 76%);
   opacity: 0.5;
   transform: scale(0.82);
 }

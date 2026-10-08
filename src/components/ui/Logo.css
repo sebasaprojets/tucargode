@@ -1,14 +1,20 @@
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: var(--fg, #fff);
 }
-.logo__mark {
-  width: 36px;
-  height: 36px;
+.logo__badge {
+  display: block;
+  width: var(--logo-size, 48px);
+  height: var(--logo-size, 48px);
   flex-shrink: 0;
+  border-radius: 50%;
+  /* aro sutil para que la insignia se despegue del fondo oscuro */
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 6px 18px -6px rgba(1, 157, 216, 0.7);
+  transition: transform var(--transition-normal);
 }
+a:hover .logo__badge { transform: rotate(-6deg) scale(1.04); }
 .logo__text {
   display: flex;
   flex-direction: column;
@@ -17,19 +23,14 @@
 .logo__word {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 1.125rem;
-  letter-spacing: 0.06em;
+  font-size: 1.1875rem;
+  letter-spacing: 0.05em;
 }
 .logo__sub {
-  margin-top: 4px;
+  margin-top: 5px;
   font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  opacity: 0.6;
-}
-.logo--official img {
-  display: block;
-  max-width: 200px;
-  object-fit: contain;
+  color: var(--blue-300);
 }

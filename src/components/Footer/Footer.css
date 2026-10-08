@@ -32,7 +32,7 @@
   color: var(--fg-muted);
   transition: color var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
 }
-.footer__social a:hover { color: var(--white); border-color: var(--blue-400); background: rgba(76, 147, 230, 0.12); transform: translateY(-2px); }
+.footer__social a:hover { color: var(--white); border-color: var(--blue-400); background: rgba(1, 185, 255, 0.12); transform: translateY(-2px); }
 .footer__title { margin-bottom: var(--space-md); font-family: var(--font-heading); font-size: var(--text-caption); font-weight: 700; letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--blue-300); }
 .footer ul { padding: 0; }
 .footer nav li a,
@@ -71,7 +71,7 @@
   font-size: clamp(4rem, 19vw, 18rem);
   line-height: 1;
   letter-spacing: -0.04em;
-  background: linear-gradient(to bottom, rgba(139, 189, 244, 0.12), transparent 80%);
+  background: linear-gradient(to bottom, rgba(127, 214, 248, 0.12), transparent 80%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

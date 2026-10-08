@@ -57,22 +57,22 @@
 .btn--primary {
   background: var(--color-primary);
   color: var(--white);
-  box-shadow: 0 8px 24px -10px rgba(11, 93, 183, 0.8);
+  box-shadow: 0 8px 24px -10px rgba(1, 157, 216, 0.8);
 }
 .btn--primary:hover:not(:disabled) {
   background: var(--color-primary-hover);
-  box-shadow: 0 12px 32px -10px rgba(11, 93, 183, 0.95);
+  box-shadow: 0 12px 32px -10px rgba(1, 157, 216, 0.95);
 }
 
 /* Accent — red, reserved for the main conversion */
 .btn--accent {
   background: var(--color-accent);
   color: var(--white);
-  box-shadow: 0 8px 24px -10px rgba(229, 57, 53, 0.75);
+  box-shadow: 0 8px 24px -10px rgba(204, 77, 71, 0.75);
 }
 .btn--accent:hover:not(:disabled) {
   background: var(--color-accent-hover);
-  box-shadow: 0 12px 32px -10px rgba(229, 57, 53, 0.9);
+  box-shadow: 0 12px 32px -10px rgba(204, 77, 71, 0.9);
 }
 
 /* Secondary — outline that adapts to context */

@@ -36,7 +36,7 @@ void main() {
   float aa = 1.5 / uRadius;
 
   // Atmósfera exterior
-  vec3 atmoColor = vec3(0.30, 0.58, 1.0);
+  vec3 atmoColor = vec3(0.02, 0.68, 1.0); // mar del logo (#01B9FF)
   float halo = pow(max(0.0, 1.0 - (d - 1.0) / 0.32), 2.6) * step(1.0, d);
   vec4 glow = vec4(atmoColor * halo * 0.55, halo * 0.55);
 

@@ -1,4 +1,4 @@
-.why { background: radial-gradient(70% 60% at 100% 100%, rgba(11, 93, 183, 0.22), transparent 70%), var(--navy-900); }
+.why { background: radial-gradient(70% 60% at 100% 100%, rgba(1, 157, 216, 0.22), transparent 70%), var(--navy-900); }
 .why__inner { position: relative; z-index: 2; }
 .why__grid { display: grid; gap: var(--space-md); }
 @media (min-width: 640px) {
@@ -29,7 +29,7 @@
   width: 52px;
   height: 52px;
   border-radius: var(--radius-md);
-  background: rgba(76, 147, 230, 0.12);
+  background: rgba(1, 185, 255, 0.12);
   color: var(--blue-300);
   transition: transform var(--transition-slow), background-color var(--transition-normal), color var(--transition-normal);
 }

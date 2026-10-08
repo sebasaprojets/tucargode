@@ -4,34 +4,44 @@
    ========================================================================== */
 
 :root {
-  /* ---- Brand palette ---- */
-  --navy-950: #030E1A;
-  --navy-900: #061A2F;
-  --navy-800: #0A2540;
-  --navy-700: #0F3257;
-  --navy-600: #16416F;
+  /* ---- Brand palette (extraída del logotipo oficial) ----
+     Mar: #019DD8 → #01B9FF · Cielo: #E1F5FE · Casco: #CC4D47 · Carga: #7A664D / #A6875F
+     Los tonos *-600/-700 son versiones más profundas para texto blanco con contraste AA. */
+  --sea-500: #019DD8; /* mar del logo */
+  --sea-400: #01B9FF; /* mar claro del logo */
+  --sky-100: #E1F5FE; /* cielo del logo */
+  --hull-500: #CC4D47; /* casco del logo */
+  --cargo-500: #A6875F; /* cajas claras */
+  --cargo-700: #7A664D; /* cajas oscuras */
+  --steel-700: #4F4F4F; /* mástiles / chimenea */
 
-  --blue-700: #084A92;
-  --blue-600: #0B5DB7;
-  --blue-500: #1A70D1;
-  --blue-400: #4C93E6;
-  --blue-300: #8BBDF4;
-  --blue-100: #E3EFFC;
-  --blue-50: #F1F7FE;
+  --navy-950: #02121F;
+  --navy-900: #04213A;
+  --navy-800: #073052;
+  --navy-700: #0A3E68;
+  --navy-600: #0F5384;
 
-  --red-600: #C62828;
-  --red-500: #E53935;
-  --red-400: #EF5B57;
-  --red-50: #FDECEC;
+  --blue-700: #005A85;
+  --blue-600: #0077A8; /* botones y enlaces: 5.0:1 sobre blanco */
+  --blue-500: #00699A; /* hover */
+  --blue-400: var(--sea-400);
+  --blue-300: #7FD6F8;
+  --blue-100: var(--sky-100);
+  --blue-50: #F2FAFE;
+
+  --red-600: #A93530;
+  --red-500: #C2423C; /* casco del logo, ajustado a 5.07:1 con texto blanco */
+  --red-400: #E06B65;
+  --red-50: #FBEDEC;
 
   --gray-950: #111827;
   --gray-700: #374151;
   --gray-600: #4B5563;
   --gray-500: #6B7280;
-  --gray-300: #D1D9E2;
-  --gray-200: #E2E8F0;
-  --gray-100: #EDF1F5;
-  --gray-50: #F4F7FA;
+  --gray-300: #C9DAE5;
+  --gray-200: #DCE8EF;
+  --gray-100: #EAF3F8;
+  --gray-50: #F4F9FC;
   --white: #FFFFFF;
 
   /* ---- Semantic colors ---- */
@@ -104,11 +114,11 @@
   --radius-full: 999px;
 
   /* ---- Shadows ---- */
-  --shadow-sm: 0 1px 2px rgba(6, 26, 47, 0.06), 0 1px 3px rgba(6, 26, 47, 0.08);
-  --shadow-md: 0 4px 12px -2px rgba(6, 26, 47, 0.08), 0 2px 4px -2px rgba(6, 26, 47, 0.06);
-  --shadow-lg: 0 24px 48px -12px rgba(6, 26, 47, 0.18), 0 8px 16px -8px rgba(6, 26, 47, 0.1);
-  --shadow-glow: 0 0 0 1px rgba(76, 147, 230, 0.25), 0 12px 40px -8px rgba(11, 93, 183, 0.45);
-  --shadow-focus: 0 0 0 3px rgba(76, 147, 230, 0.45);
+  --shadow-sm: 0 1px 2px rgba(4, 33, 58, 0.06), 0 1px 3px rgba(4, 33, 58, 0.08);
+  --shadow-md: 0 4px 12px -2px rgba(4, 33, 58, 0.08), 0 2px 4px -2px rgba(4, 33, 58, 0.06);
+  --shadow-lg: 0 24px 48px -12px rgba(4, 33, 58, 0.18), 0 8px 16px -8px rgba(4, 33, 58, 0.1);
+  --shadow-glow: 0 0 0 1px rgba(1, 185, 255, 0.25), 0 12px 40px -8px rgba(1, 157, 216, 0.45);
+  --shadow-focus: 0 0 0 3px rgba(1, 185, 255, 0.45);
 
   /* ---- Motion ---- */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

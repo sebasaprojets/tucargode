@@ -1,6 +1,6 @@
 .connection {
   background:
-    radial-gradient(60% 50% at 10% 100%, rgba(229, 57, 53, 0.07), transparent 70%),
+    radial-gradient(60% 50% at 10% 100%, rgba(204, 77, 71, 0.07), transparent 70%),
     linear-gradient(to bottom, var(--navy-950), var(--navy-900));
 }
 .chain {
@@ -50,9 +50,9 @@
   background: rgba(255, 255, 255, 0.3);
   transition: background-color var(--transition-slow), transform var(--transition-slow);
 }
-.chain__item.is-active .chain__node { border-color: var(--blue-300); box-shadow: 0 0 0 6px rgba(76, 147, 230, 0.12); }
+.chain__item.is-active .chain__node { border-color: var(--blue-300); box-shadow: 0 0 0 6px rgba(1, 185, 255, 0.12); }
 .chain__item.is-active .chain__node span { background: var(--blue-300); transform: scale(1.1); }
-.chain__item.is-last.is-active .chain__node { border-color: var(--color-accent); box-shadow: 0 0 0 6px rgba(229, 57, 53, 0.15); }
+.chain__item.is-last.is-active .chain__node { border-color: var(--color-accent); box-shadow: 0 0 0 6px rgba(204, 77, 71, 0.15); }
 .chain__item.is-last.is-active .chain__node span { background: var(--color-accent); }
 .chain__index { font-family: var(--font-mono); font-size: 0.75rem; color: var(--blue-300); }
 .chain__label {
@@ -62,7 +62,7 @@
   letter-spacing: var(--tracking-tight);
 }
 .chain__item.is-last .chain__label { color: var(--white); }
-.chain__item.is-last.is-active .chain__label { background: linear-gradient(90deg, #fff, #EF5B57); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.chain__item.is-last.is-active .chain__label { background: linear-gradient(90deg, #fff, #E06B65); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .chain__text { margin-top: 6px; max-width: 320px; color: var(--fg-muted); font-size: var(--text-small); }
 
 @media (min-width: 1024px) {

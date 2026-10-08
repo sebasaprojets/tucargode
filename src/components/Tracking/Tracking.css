@@ -6,7 +6,7 @@
   width: 900px;
   height: 500px;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse, rgba(11, 93, 183, 0.3), transparent 65%);
+  background: radial-gradient(ellipse, rgba(1, 157, 216, 0.3), transparent 65%);
   pointer-events: none;
 }
 .tracking__inner { position: relative; z-index: 2; }
@@ -92,7 +92,7 @@
   transition: all var(--transition-normal);
 }
 .ttl__item.is-done .ttl__node { background: var(--color-primary); border-color: var(--color-primary); color: var(--white); }
-.ttl__item.is-current .ttl__node { background: var(--color-accent); border-color: var(--color-accent); color: var(--white); box-shadow: 0 0 0 6px rgba(229, 57, 53, 0.2); }
+.ttl__item.is-current .ttl__node { background: var(--color-accent); border-color: var(--color-accent); color: var(--white); box-shadow: 0 0 0 6px rgba(204, 77, 71, 0.2); }
 .ttl__text { display: flex; flex-direction: column; padding-top: 2px; }
 .ttl__text strong { font-family: var(--font-heading); font-size: 0.9375rem; text-transform: uppercase; letter-spacing: 0.06em; }
 .ttl__text span { font-size: var(--text-small); color: var(--fg-muted); }

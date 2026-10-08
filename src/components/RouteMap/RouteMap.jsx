@@ -88,12 +88,12 @@ export default function RouteMap() {
           >
             <defs>
               <linearGradient id="mapRoute" x1="1" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#8BBDF4" />
-                <stop offset="100%" stopColor="#E53935" />
+                <stop offset="0%" stopColor="#7FD6F8" />
+                <stop offset="100%" stopColor="#CC4D47" />
               </linearGradient>
               <radialGradient id="mapVignette" cx="50%" cy="50%" r="70%">
-                <stop offset="60%" stopColor="#061A2F" stopOpacity="0" />
-                <stop offset="100%" stopColor="#061A2F" stopOpacity="0.9" />
+                <stop offset="60%" stopColor="#04213A" stopOpacity="0" />
+                <stop offset="100%" stopColor="#04213A" stopOpacity="0.9" />
               </radialGradient>
             </defs>
 

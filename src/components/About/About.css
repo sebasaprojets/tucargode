@@ -45,7 +45,7 @@
   background: var(--blue-100);
 }
 .about__item.is-now { background: var(--navy-900); color: var(--white); border-color: transparent; }
-.about__item.is-now::before { background: var(--color-accent); box-shadow: 0 0 0 5px rgba(229, 57, 53, 0.25); }
+.about__item.is-now::before { background: var(--color-accent); box-shadow: 0 0 0 5px rgba(204, 77, 71, 0.25); }
 .about__item.is-now p { color: rgba(255, 255, 255, 0.72); }
 @media (hover: hover) {
   .about__item:hover { transform: translateX(4px); box-shadow: var(--shadow-md); }

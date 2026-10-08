@@ -82,7 +82,7 @@
   border-radius: var(--radius-full);
   font-size: var(--text-caption);
   font-weight: 600;
-  background: rgba(11, 93, 183, 0.08);
+  background: rgba(1, 157, 216, 0.08);
   color: var(--color-primary);
 }
 .mode-card--air .mode-card__pros li { background: rgba(255, 255, 255, 0.08); color: var(--blue-300); }
