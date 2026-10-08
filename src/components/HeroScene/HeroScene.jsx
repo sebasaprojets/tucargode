@@ -1,6 +1,7 @@
 import { m, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useEffect } from 'react';
 import Particles from '../ui/Particles';
+import SkyWriting from './SkyWriting';
 import { Ship, DusseldorfSkyline, WaveBand } from '../Connection/VoyageArt';
 import { useCanHover } from '../../hooks/useMediaQuery';
 import './HeroScene.css';
@@ -118,6 +119,7 @@ export default function HeroScene({ targetRef }) {
 
       {/* Avión: cruza hacia el oeste con luces de navegación y estela */}
       <m.div className="hs-plane-layer" style={{ y: planeScroll, x: midX }}>
+        <SkyWriting reduce={reduce} />
         <div className="hs-plane">
           <div className="hs-plane__trail" />
           <CargoPlane />

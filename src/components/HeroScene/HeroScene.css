@@ -207,3 +207,55 @@
   .hs-plane { left: 55%; animation: none; }
   .hs-ship { left: 55%; animation: none; opacity: 1; }
 }
+
+/* ---- «TUCARGO» escrito con humo ---- */
+.hs-skywrite {
+  --reveal: 0;
+  --fade: 0;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  /* se revela de derecha a izquierda con un borde suave, como humo recién expulsado */
+  mask-image: linear-gradient(
+    to left,
+    #000 0%,
+    #000 calc(var(--reveal) * 100% - 6%),
+    transparent calc(var(--reveal) * 100% + 6%)
+  );
+  -webkit-mask-image: linear-gradient(
+    to left,
+    #000 0%,
+    #000 calc(var(--reveal) * 100% - 6%),
+    transparent calc(var(--reveal) * 100% + 6%)
+  );
+  /* al dispersarse: sube, se expande y se difumina */
+  transform: translateY(calc(var(--fade) * -10px)) scale(calc(1 + var(--fade) * 0.08));
+}
+.hs-skywrite__defs { position: absolute; }
+/* Nube de humo detrás de las letras: une la palabra con la estela */
+.hs-skywrite::before {
+  content: '';
+  position: absolute;
+  inset: 8% -10%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(225, 242, 255, 0.2), rgba(127, 214, 248, 0.06) 60%, transparent);
+}
+.hs-skywrite__text {
+  display: block;
+  padding: 0.3em 0.4em;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(1rem, 0.72rem + 1.15vw, 1.7rem);
+  letter-spacing: 0.34em;
+  line-height: 1;
+  color: rgba(246, 251, 255, 0.92);
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.75),
+    0 0 16px rgba(206, 238, 255, 0.55),
+    0 0 34px rgba(127, 214, 248, 0.4);
+  filter: url(#hsSmoke) blur(calc(var(--fade) * 3px));
+}
+@media (max-width: 767px) {
+  .hs-skywrite__text { letter-spacing: 0.28em; }
+}
