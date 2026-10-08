@@ -7,6 +7,8 @@ import { useCanHover } from '../../hooks/useMediaQuery';
 import './HeroScene.css';
 import { useReduceMotion } from '../../hooks/useMotionPreference';
 
+const TAIL_FIN = 'M430 -18 L452 -18 Q470 -60 492 -82 L512 -82 L500 -18 Z';
+
 /** Avión de carga en vista lateral, morro a la izquierda (vuela hacia el oeste: Venezuela). */
 function CargoPlane() {
   return (
@@ -25,18 +27,21 @@ function CargoPlane() {
       {/* Ala lejana */}
       <path d="M215 -6 L300 -6 L262 -52 L240 -52 Z" fill="#6F8AA3" opacity="0.8" />
       {/* Estabilizador vertical */}
-      <path d="M430 -18 L452 -18 Q470 -60 492 -82 L512 -82 L500 -18 Z" fill="url(#hsPlaneBody)" />
-      {/* Bandera de Venezuela en la cola (inclinada como el estabilizador) */}
-      <g transform="translate(480 -66) skewX(-20)">
-        <rect width="28" height="6" fill="#FFCC00" />
-        <rect y="6" width="28" height="6" fill="#00247D" />
-        <rect y="12" width="28" height="6" fill="#CF142B" />
+      <path d={TAIL_FIN} fill="url(#hsPlaneBody)" />
+      {/* Bandera de Venezuela de lado a lado de la cola (recortada con la forma del estabilizador) */}
+      <clipPath id="hsTailClip">
+        <path d={TAIL_FIN} />
+      </clipPath>
+      <g clipPath="url(#hsTailClip)">
+        <rect x="440" y="-66" width="80" height="6" fill="#FFCC00" />
+        <rect x="440" y="-60" width="80" height="6" fill="#00247D" />
+        <rect x="440" y="-54" width="80" height="6" fill="#CF142B" />
         {[-70, -50, -30, -10, 10, 30, 50, 70].map((a) => (
           <circle
             key={a}
-            cx={14 + 5.2 * Math.sin((a * Math.PI) / 180)}
-            cy={11.2 - 3.4 * Math.cos((a * Math.PI) / 180)}
-            r="0.55"
+            cx={490 + 9 * Math.sin((a * Math.PI) / 180)}
+            cy={-55.4 - 3.2 * Math.cos((a * Math.PI) / 180)}
+            r="0.6"
             fill="#FFFFFF"
           />
         ))}

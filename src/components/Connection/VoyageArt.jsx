@@ -40,6 +40,13 @@ export function Ship() {
       {crate(-33, -70, true)}
       {crate(-84, -102, false)}
       {crate(-50, -102, true)}
+      {/* Bandera de Alemania en la popa, ondeando */}
+      <path d="M146 -6 V-52" stroke="#4F4F4F" strokeWidth="2.5" strokeLinecap="round" />
+      <g className="ship-flag">
+        <path d="M147 -51 Q156 -54 164 -51 T180 -51 V-45.5 Q172 -48.5 164 -45.5 T147 -45.5 Z" fill="#000000" />
+        <path d="M147 -45.5 Q156 -48.5 164 -45.5 T180 -45.5 V-40 Q172 -43 164 -40 T147 -40 Z" fill="#DD0000" />
+        <path d="M147 -40 Q156 -43 164 -40 T180 -40 V-34.5 Q172 -37.5 164 -34.5 T147 -34.5 Z" fill="#FFCE00" />
+      </g>
       {/* Casco */}
       <path d="M-182 -30 Q-160 -22 -142 -6 L150 -6 L176 -32 L136 30 L-128 30 Q-158 6 -182 -30 Z" fill="#CC4D47" />
       <path d="M-140 -2 H40 Q52 10 40 24 H-118 Q-136 12 -140 -2 Z" fill="#D1756F" opacity="0.75" />
