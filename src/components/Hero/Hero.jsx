@@ -58,6 +58,7 @@ export default function Hero() {
                 className="hero__title"
                 text={'De Alemania a Venezuela.\nTu carga, en buenas manos.'}
                 animateOnMount
+                chars
                 delay={0.08}
                 stagger={0.045}
               />

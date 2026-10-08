@@ -1,32 +1,43 @@
 import { useEffect, useRef } from 'react';
 import { useMotionValueEvent } from 'framer-motion';
+import { useReduceMotion } from '../../hooks/useMotionPreference';
 import './ParticleText.css';
 
-// Reparto del progreso: el frente recorre el texto en SWEEP; cada partícula tarda DURATION en disolverse
-const SWEEP = 0.56;
-const DURATION = 0.4;
-const JITTER = 0.04;
-import { useReduceMotion } from '../../hooks/useMotionPreference';
+// Reparto del progreso: el frente recorre las letras en SWEEP; cada letra tarda DURATION en deshacerse
+const SWEEP = 0.6;
+const DURATION = 0.32;
+const LETTER_FADE = 0.3; // fracción de DURATION en la que la letra HTML se apaga
+const JITTER = 0.05; // retraso aleatorio de cada partícula dentro de su letra
+
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const smooth = (t) => t * t * (3 - 2 * t);
+
+/** Texto partido en letras (`.ch`) para que ParticleText pueda deshacerlas una a una. */
+export function Chars({ text }) {
+  return [...text].map((c, i) => (
+    <span key={i} className="ch">
+      {c}
+    </span>
+  ));
+}
 
 /**
- * Texto que se convierte en partículas (patrón de React Bits).
+ * Letras que se deshacen (o se forman) en partículas, una a una (patrón de React Bits).
  *
- * Lee la posición real de cada palabra del elemento `targetRef` (o del bloque
- * entero), la redibuja en un canvas con la misma tipografía y la muestrea en
- * partículas. `progress` (MotionValue 0→1) controla la dispersión:
- *   0 = texto entero (se ve el texto HTML real, nítido y accesible)
- *   1 = partículas dispersas por el «viento» y desvanecidas.
- * Solo dibuja cuando cambia el progreso: no hay bucle continuo.
- *
- * mode="dissolve": el texto se deshace al avanzar (hero).
- * mode="assemble": las partículas se juntan al entrar (usar progress invertido).
+ * Busca las letras `.ch` dentro de `targetRef`, dibuja cada una en un canvas con
+ * su tipografía y posición reales y la muestrea en partículas. `progress`
+ * (MotionValue 0→1) controla el efecto:
+ *   0 = texto HTML entero (nítido y accesible)
+ *   1 = todas las letras convertidas en partículas y dispersas por el «viento».
+ * Las letras se van apagando de derecha a izquierda y cada una estalla en sus
+ * propias partículas; con el progreso invertido se forman de izquierda a derecha.
+ * Solo dibuja cuando cambia el progreso y solo las letras en transición.
  */
-export default function ParticleText({ targetRef, progress, wind = [1, -0.6], gap, colors, threshold = 0.02, pad = 260 }) {
+export default function ParticleText({ targetRef, progress, wind = [1, -0.6], gap, colors, threshold = 0.01, pad = 260 }) {
   const canvasRef = useRef(null);
-  const state = useRef({ particles: null, w: 0, h: 0, dpr: 1, last: -1 });
+  const state = useRef({ letters: null, w: 0, h: 0, last: -1, drawn: false });
   const reduce = useReduceMotion();
 
-  // Construye las partículas a partir del texto real (tras cargar las fuentes)
   useEffect(() => {
     if (reduce) return undefined;
     const canvas = canvasRef.current;
@@ -36,162 +47,140 @@ export default function ParticleText({ targetRef, progress, wind = [1, -0.6], ga
 
     const build = () => {
       if (cancelled) return;
+      const els = [...target.querySelectorAll('.ch')].filter((el) => el.textContent.trim());
+      if (!els.length) return;
       const box = canvas.parentElement.getBoundingClientRect();
       // El lienzo se extiende `pad` px alrededor del bloque para que las partículas vuelen sin cortarse
-      const host = { left: box.left - pad, top: box.top - pad, width: box.width + pad * 2, height: box.height + pad * 2 };
+      const hostLeft = box.left - pad;
+      const hostTop = box.top - pad;
+      const w = Math.ceil(box.width + pad * 2);
+      const h = Math.ceil(box.height + pad * 2);
       canvas.style.left = `${-pad}px`;
       canvas.style.top = `${-pad}px`;
-      const small = window.innerWidth < 768;
-      const step = gap ?? (small ? 4 : 3);
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = Math.ceil(host.width);
-      const h = Math.ceil(host.height);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Lienzo de muestreo a resolución 1x
+      const step = gap ?? (window.innerWidth < 768 ? 3 : 2.5);
       const off = document.createElement('canvas');
       off.width = w;
       off.height = h;
       const o = off.getContext('2d', { willReadFrequently: true });
+      o.textBaseline = 'alphabetic';
 
-      // Palabras: cualquier nodo de texto hoja dentro del objetivo
-      const walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT);
-      const range = document.createRange();
-      let node;
-      while ((node = walker.nextNode())) {
-        const text = node.textContent;
-        if (!text.trim()) continue;
-        const el = node.parentElement;
-        if (el.closest('.visually-hidden')) continue;
+      // Cada letra: se dibuja sola, se muestrea su recuadro y se borra
+      const letters = [];
+      for (const el of els) {
+        const r = el.getBoundingClientRect();
+        if (r.width < 1) continue;
         const cs = getComputedStyle(el);
         const fontSize = parseFloat(cs.fontSize);
         o.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-        o.textBaseline = 'alphabetic';
-        const lineEl = el.closest('.split-line') || el;
-        const color = colors?.(lineEl, el) ?? cs.color;
-        // Dibuja palabra por palabra en su posición real
-        const parts = text.split(/(\s+)/);
-        let offset = 0;
-        for (const part of parts) {
-          if (part.trim()) {
-            range.setStart(node, offset);
-            range.setEnd(node, offset + part.length);
-            const r = range.getBoundingClientRect();
-            if (r.width < 2) {
-              offset += part.length;
-              continue;
+        const metrics = o.measureText(el.textContent);
+        const asc = metrics.fontBoundingBoxAscent ?? fontSize * 0.9;
+        const desc = metrics.fontBoundingBoxDescent ?? fontSize * 0.25;
+        const lx = r.left - hostLeft;
+        const baseline = r.top - hostTop + (r.height - (asc + desc)) / 2 + asc;
+        const color = colors?.(el.closest('.split-line') || el, el) ?? cs.color;
+        o.fillStyle = '#fff';
+        o.fillText(el.textContent, lx, baseline);
+        const bx = Math.max(0, Math.floor(lx - fontSize * 0.3));
+        const by = Math.max(0, Math.floor(baseline - asc - 2));
+        const bw = Math.min(w - bx, Math.ceil(r.width + fontSize * 0.6));
+        const bh = Math.min(h - by, Math.ceil(asc + desc + 4));
+        if (bw <= 0 || bh <= 0) continue;
+        const data = o.getImageData(bx, by, bw, bh).data;
+        o.clearRect(bx, by, bw, bh);
+        const parts = [];
+        for (let y = 0; y < bh; y += step) {
+          for (let x = 0; x < bw; x += step) {
+            if (data[(Math.floor(y) * bw + Math.floor(x)) * 4 + 3] > 128) {
+              const seed = Math.random();
+              parts.push({
+                x: bx + x,
+                y: by + y,
+                dx: (wind[0] + (Math.random() - 0.5) * 1.4) * (90 + seed * 220),
+                dy: (wind[1] + (Math.random() - 0.5) * 1.4) * (90 + seed * 220),
+                j: Math.random() * JITTER,
+                s: step * (0.6 + Math.random() * 0.5),
+              });
             }
-            const metrics = o.measureText(part);
-            const asc = metrics.fontBoundingBoxAscent ?? fontSize * 0.9;
-            const desc = metrics.fontBoundingBoxDescent ?? fontSize * 0.25;
-            const baseline = r.top - host.top + (r.height - (asc + desc)) / 2 + asc;
-            o.fillStyle = color;
-            o.fillText(part, r.left - host.left, baseline);
-          }
-          offset += part.length;
-        }
-      }
-
-      const data = o.getImageData(0, 0, w, h).data;
-      const parts = [];
-      for (let y = 0; y < h; y += step) {
-        for (let x = 0; x < w; x += step) {
-          const i = (y * w + x) * 4;
-          if (data[i + 3] > 128) {
-            const seed = Math.random();
-            parts.push({
-              x,
-              y,
-              c: `rgb(${data[i]},${data[i + 1]},${data[i + 2]})`,
-              // dirección: viento + dispersión aleatoria; retardo por posición (efecto barrido)
-              dx: (wind[0] + (Math.random() - 0.5) * 1.6) * (120 + seed * 260),
-              dy: (wind[1] + (Math.random() - 0.5) * 1.6) * (120 + seed * 260),
-              jitter: Math.random() * JITTER,
-              s: step * (0.55 + Math.random() * 0.5),
-            });
           }
         }
+        letters.push({ el, x: lx + r.width / 2, color, parts, opacity: -1 });
       }
-      // Barrido progresivo de derecha a izquierda: cada partícula empieza a
-      // deshacerse cuando el «frente» pasa por su posición
+      // Orden del barrido: de derecha a izquierda (las dos líneas a la vez)
       let minX = Infinity;
       let maxX = -Infinity;
-      for (const q of parts) {
-        if (q.x < minX) minX = q.x;
-        if (q.x > maxX) maxX = q.x;
+      for (const l of letters) {
+        minX = Math.min(minX, l.x);
+        maxX = Math.max(maxX, l.x);
       }
       const span = Math.max(1, maxX - minX);
-      for (const q of parts) q.delay = (1 - (q.x - minX) / span) * SWEEP + q.jitter;
-      // Agrupa por color para minimizar cambios de fillStyle
-      parts.sort((a, b) => (a.c < b.c ? -1 : 1));
-      state.current = { particles: parts, w, h, dpr, last: -1, minX, span };
+      for (const l of letters) l.delay = (1 - (l.x - minX) / span) * SWEEP + Math.random() * 0.02;
+
+      // Restaura las letras del montaje anterior (por si cambió el tamaño)
+      for (const l of state.current.letters ?? []) l.el.style.opacity = '';
+      state.current = { letters, w, h, ctx, last: -1, drawn: false };
       draw(progress.get());
     };
 
     const fontsReady = document.fonts?.ready ?? Promise.resolve();
     // Espera a que la animación de entrada del texto termine antes de medir
     const t = setTimeout(() => fontsReady.then(build), 1600);
+    let rt = 0;
     const ro = new ResizeObserver(() => {
       clearTimeout(rt);
       rt = setTimeout(build, 200);
     });
-    let rt = 0;
     ro.observe(target);
     return () => {
       cancelled = true;
       clearTimeout(t);
       clearTimeout(rt);
       ro.disconnect();
+      for (const l of state.current.letters ?? []) l.el.style.opacity = '';
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduce, targetRef]);
 
   const draw = (p) => {
-    const canvas = canvasRef.current;
     const st = state.current;
-    if (!canvas || !st.particles) return;
-    const q = Math.round(p * 400) / 400;
+    if (!st.letters) return;
+    const q = p <= threshold ? 0 : Math.round(p * 500) / 500;
     if (q === st.last) return;
     st.last = q;
-    const ctx = canvas.getContext('2d');
-    ctx.setTransform(st.dpr, 0, 0, st.dpr, 0, 0);
-    ctx.clearRect(0, 0, st.w, st.h);
-    const target = targetRef.current;
-    const active = q > threshold;
-    canvas.style.opacity = active ? '1' : '0';
-    if (!active) {
-      // Texto HTML entero y nítido
-      if (target) {
-        target.style.maskImage = '';
-        target.style.webkitMaskImage = '';
-      }
-      return;
+    const { ctx } = st;
+    if (st.drawn) {
+      ctx.clearRect(0, 0, st.w, st.h);
+      st.drawn = false;
     }
-    // El texto HTML sigue sólido a la izquierda del frente; a la derecha ya es partículas
-    const frontN = 1 - q / SWEEP; // 1 → 0 a medida que avanza el progreso
-    const frontX = st.minX + frontN * st.span - pad; // en coordenadas del elemento
-    const mask = `linear-gradient(to right, #000 ${Math.round(frontX - 14)}px, transparent ${Math.round(frontX + 4)}px)`;
-    if (target) {
-      target.style.maskImage = mask;
-      target.style.webkitMaskImage = mask;
-    }
-    let color = '';
-    for (const pt of st.particles) {
-      const local = (q - pt.delay) / DURATION;
-      if (local <= 0 || local >= 1) continue; // aún sólido (texto HTML) o ya disuelto
-      const e = local * local * (3 - 2 * local); // suavizado
-      const alpha = 1 - e;
-      if (alpha <= 0.02) continue;
-      if (pt.c !== color) {
-        color = pt.c;
-        ctx.fillStyle = color;
+    for (const l of st.letters) {
+      const t = (q - l.delay) / DURATION;
+      // La letra HTML se apaga justo cuando empieza a convertirse en partículas
+      const op = q === 0 ? 1 : 1 - smooth(clamp01(t / LETTER_FADE));
+      if (op !== l.opacity) {
+        l.opacity = op;
+        l.el.style.opacity = op === 1 ? '' : op.toFixed(3);
       }
-      ctx.globalAlpha = alpha;
-      const size = pt.s * (1 - e * 0.5);
-      ctx.fillRect(pt.x + pt.dx * e, pt.y + pt.dy * e, size, size);
+      if (q === 0 || t <= 0 || t >= 1 + JITTER / DURATION) continue;
+      ctx.fillStyle = l.color;
+      for (const pt of l.parts) {
+        const k = clamp01(t - pt.j / DURATION);
+        if (k <= 0 || k >= 1) continue;
+        const e = smooth(k);
+        // Las partículas aparecen a medida que la letra se apaga y se van con el viento
+        const alpha = Math.min(1, k / LETTER_FADE) * (1 - e);
+        if (alpha <= 0.02) continue;
+        ctx.globalAlpha = alpha;
+        const size = pt.s * (1 - e * 0.45);
+        ctx.fillRect(pt.x + pt.dx * e, pt.y + pt.dy * e, size, size);
+        st.drawn = true;
+      }
     }
     ctx.globalAlpha = 1;
   };

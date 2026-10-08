@@ -27,7 +27,14 @@ export default function Logo({ size = 48, compact = false, wordmark, className =
       </picture>
       {showText && (
         <span className="logo__text">
-          <span className="logo__word">TUCARGO</span>
+          {/* Cada letra flota como sobre una ola (onda que recorre la palabra) */}
+          <span className="logo__word" aria-label="TUCARGO">
+            {[...'TUCARGO'].map((c, i) => (
+              <span key={i} className="logo__wave" style={{ '--i': i }} aria-hidden="true">
+                {c}
+              </span>
+            ))}
+          </span>
           {!compact && <span className="logo__sub">Düsseldorf</span>}
         </span>
       )}

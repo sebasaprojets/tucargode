@@ -26,6 +26,20 @@ a:hover .logo__badge { transform: rotate(-6deg) scale(1.04); }
   font-size: 1.1875rem;
   letter-spacing: 0.05em;
 }
+.logo__wave {
+  display: inline-block;
+  /* ola lenta y suave (cámara lenta) */
+  animation: logo-wave 6.5s ease-in-out infinite;
+  /* desfase por letra: la ola avanza de izquierda a derecha sin pausa inicial */
+  animation-delay: calc(var(--i) * 0.38s - 6.5s);
+  will-change: transform;
+}
+@keyframes logo-wave {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-1.6px) rotate(-1.5deg); }
+  50% { transform: translateY(0) rotate(0deg); }
+  75% { transform: translateY(1.2px) rotate(1.5deg); }
+}
 .logo__sub {
   margin-top: 5px;
   font-size: 0.625rem;

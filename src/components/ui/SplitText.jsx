@@ -1,11 +1,13 @@
 import { m } from 'framer-motion';
 import { useReduceMotion } from '../../hooks/useMotionPreference';
+import { Chars } from '../ParticleText/ParticleText';
 
 /**
  * Animación de texto palabra por palabra (patrón «Split Text» de React Bits).
  * Mantiene el texto completo accesible para lectores de pantalla.
+ * `chars`: parte cada palabra en letras `.ch` (para ParticleText).
  */
-export default function SplitText({ text, as = 'span', id, className, delay = 0, stagger = 0.045, animateOnMount = false }) {
+export default function SplitText({ text, as = 'span', id, className, delay = 0, stagger = 0.045, animateOnMount = false, chars = false }) {
   const reduce = useReduceMotion();
   const Tag = as;
   const lines = text.split('\n');
@@ -44,7 +46,7 @@ export default function SplitText({ text, as = 'span', id, className, delay = 0,
                     }}
                     transition={{ duration: 0.9, delay: delay + i * stagger, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    {word}
+                    {chars ? <Chars text={word} /> : word}
                   </m.span>
                   {wi < line.split(' ').length - 1 ? ' ' : ''}
                 </span>

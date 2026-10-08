@@ -6,7 +6,7 @@ import SplitText from '../ui/SplitText';
 import Button from '../ui/Button';
 import Magnetic from '../ui/Magnetic';
 import Flag from '../ui/Flag';
-import ParticleText from '../ParticleText/ParticleText';
+import ParticleText, { Chars } from '../ParticleText/ParticleText';
 import { formatInt } from '../../utils/format';
 import { distanceKm } from '../Globe/globeMath';
 import { origin, destinations } from '../../data/destinations';
@@ -53,15 +53,19 @@ export default function Distance() {
           <div className="distance__km-wrap">
             <div ref={kmRef} className="distance__km">
               <span className="distance__approx">≈</span>
-              <span>{formatInt(KM)}</span>
-              <span className="distance__unit">km</span>
+              <span className="distance__num">
+                <Chars text={formatInt(KM)} />
+              </span>
+              <span className="distance__unit">
+                <Chars text="km" />
+              </span>
             </div>
             <ParticleText
               targetRef={kmRef}
               progress={assemble}
               wind={[-1, 0.5]}
               pad={220}
-              colors={(line, el) => (el.classList.contains('distance__km') ? '#D9F3FE' : '#7FD6F8')}
+              colors={(line, el) => (el.closest('.distance__unit') ? '#7FD6F8' : '#D9F3FE')}
             />
           </div>
           <Reveal as="p" variant="fade" delay={0.1} className="distance__caption">
