@@ -1,10 +1,9 @@
-import { ArrowUp, Phone, Mail, MapPin, Play } from 'lucide-react';
+import { ArrowUp, Phone, Mail, MapPin } from 'lucide-react';
 import Logo from '../ui/Logo';
 import Button from '../ui/Button';
 import Magnetic from '../ui/Magnetic';
 import { WhatsAppIcon, InstagramIcon, XIcon } from '../ui/BrandIcons';
 import { navItems, siteConfig, whatsappLink } from '../../config/siteConfig';
-import { replayIntro } from '../../lib/intro';
 import { services } from '../../data/services';
 import './Footer.css';
 
@@ -104,9 +103,6 @@ export default function Footer() {
           <div className="footer__legal">
             {legal.impressumUrl && <a href={legal.impressumUrl}>Impressum</a>}
             {legal.privacyUrl && <a href={legal.privacyUrl}>Datenschutz</a>}
-            <button type="button" className="footer__intro" onClick={replayIntro}>
-              Ver intro <Play size={12} aria-hidden="true" />
-            </button>
             <a href="#inicio" className="footer__top">
               Volver arriba <ArrowUp size={14} aria-hidden="true" />
             </a>

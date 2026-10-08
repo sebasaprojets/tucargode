@@ -63,19 +63,6 @@
 .footer__legal { display: flex; gap: var(--space-lg); }
 .footer__legal a { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; }
 .footer__legal a:hover { color: var(--white); }
-.footer__intro {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 32px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-.footer__intro:hover { color: var(--white); }
 .footer__giant {
   margin: 0 0 -0.22em;
   text-align: center;

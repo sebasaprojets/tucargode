@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, useEffect } from 'react';
 import { useMediaQuery } from './hooks/useMediaQuery';
 import { DESKTOP_MOTION_QUERY } from './hooks/useMotionPreference';
 import { LazyMotion, MotionConfig, domAnimation } from 'framer-motion';
@@ -11,10 +11,7 @@ import DeferredSection from './components/ui/DeferredSection';
 import ScrollProgress from './components/ScrollProgress/ScrollProgress';
 import MobileActionBar from './components/MobileActionBar/MobileActionBar';
 import { initAnchorNavigation, initSmoothScroll } from './lib/scroll';
-import { REPLAY_INTRO_EVENT, shouldPlayIntro } from './lib/intro';
 
-// Intro cinematográfica: chunk propio, solo se descarga cuando se va a mostrar
-const Intro = lazy(() => import('./components/Intro/Intro'));
 
 // Code splitting: todo lo que está bajo el primer pliegue se carga en chunks aparte.
 const Distance = lazy(() => import('./components/Distance/Distance'));
@@ -42,24 +39,12 @@ export default function App() {
     return off;
   }, []);
 
-  const [intro, setIntro] = useState(shouldPlayIntro);
-  useEffect(() => {
-    const replay = () => setIntro(true);
-    window.addEventListener(REPLAY_INTRO_EVENT, replay);
-    return () => window.removeEventListener(REPLAY_INTRO_EVENT, replay);
-  }, []);
-
   return (
     <LazyMotion features={domAnimation} strict>
     <MotionConfig reducedMotion={desktopMotion ? 'never' : 'user'}>
       <a href="#main" className="skip-link">
         Saltar al contenido
       </a>
-      {intro && (
-        <Suspense fallback={null}>
-          <Intro onDone={() => setIntro(false)} />
-        </Suspense>
-      )}
       <ScrollProgress />
       <Header />
       <main id="main">

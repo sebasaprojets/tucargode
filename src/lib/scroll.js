@@ -39,12 +39,6 @@ export async function initSmoothScroll() {
   return lenis;
 }
 
-/** Vuelve al inicio sin animación (al abrir la intro). */
-export function scrollToTop() {
-  if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
-  window.scrollTo(0, 0);
-}
-
 /** Bloquea/desbloquea el scroll (menú móvil, modales). */
 export function setScrollLocked(locked) {
   lockCount = Math.max(0, lockCount + (locked ? 1 : -1));

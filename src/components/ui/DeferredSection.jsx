@@ -1,6 +1,5 @@
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { MOUNT_ALL_EVENT } from '../../lib/scroll';
-import { INTRO_DONE_EVENT } from '../../lib/intro';
 
 /**
  * Monta una sección diferida (lazy) de forma progresiva:
@@ -30,14 +29,7 @@ let started = false;
 function startQueueAfterLoad() {
   if (started) return;
   started = true;
-  const go = () => {
-    // Durante la intro no se montan secciones: el hilo principal queda libre para la animación
-    if (document.documentElement.classList.contains('intro-active') || document.documentElement.classList.contains('intro-pending')) {
-      window.addEventListener(INTRO_DONE_EVENT, go, { once: true });
-      return;
-    }
-    setTimeout(() => !scheduled && pump(), 1200);
-  };
+  const go = () => setTimeout(() => !scheduled && pump(), 1200);
   if (document.readyState === 'complete') go();
   else window.addEventListener('load', go, { once: true });
 }

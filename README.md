@@ -66,21 +66,6 @@ Os dados vêm do conteúdo publicado em tucargo.de (início, «¿Quiénes somos?
 - Microinterações: botões magnéticos, cartões com inclinação 3D, faixa infinita que reage à velocidade do scroll, barra de progresso, rolagem suave (Lenis) no desktop, barra de ações fixa no celular.
 - Tudo respeita `prefers-reduced-motion` e pausa fora da tela.
 
-## Intro cinematográfica (splash)
-
-Formato «brand film», ≈ 6,5 s + saída, só na primeira visita:
-1. Barras de cinema com painel (rota Düsseldorf → Caracas, coordenadas reais, timecode e barra de progresso), grão e névoa. O filme do cargueiro entra do preto, em câmera lenta.
-2. Títulos com máscara: «De Alemania a Venezuela.» e a distância real contando até 7.965 km — «Ninguna distancia es suficiente.»
-3. Corte para o mar aberto: o mar se agita, um aro se fecha e o selo da TUCARGO emerge com reflexo; «TUCARGO» letra a letra e um brilho cruzando o logo.
-4. As barras se abrem e o logo desliza até a posição exata dele no header (GSAP Flip), enquanto o site entra em cascata.
-
-- Arquivos: `src/components/Intro/` (`introConfig.js` concentra tempos, tamanhos, câmera lenta, zoom, névoa e fontes do vídeo).
-- Vídeo em `public/media/` (`intro-1280.*` computador, `intro-854.*` celular, `intro-poster.webp`), sem áudio, editado a partir do vídeo enviado (sem as partes com o logo sobreposto). Para trocar o filme, substitua esses arquivos mantendo os nomes.
-- Interação: parallax 3D lento com mouse/giroscópio, clique no mar = ondas, «Saltar intro» e `Esc`.
-- Para rever: botão **Ver intro** no rodapé ou `?intro` na URL. Links diretos a uma seção (`#calculadora`) pulam a intro.
-- «Reduzir movimento» = só um fundido (no computador segue o critério do resto do site; ajustável em `respectReducedMotionOnDesktop`).
-- Se mudar `storageKey`, atualize também o script no `<head>` do `index.html`.
-
 ## Vídeos cinematográficos (Higgsfield)
 
 A seção da travessia aceita um vídeo no lugar da ilustração: preencha `siteConfig.media.voyage` (`mp4`, `webm`, `poster`, `mobileMp4`) com arquivos em `public/media/`. Recomendações: 1920×1080 (e 1080×1920 para celular), 8–15 s em loop, sem áudio, ≤ 4 MB, H.264.
