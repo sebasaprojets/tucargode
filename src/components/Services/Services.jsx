@@ -4,8 +4,26 @@ import ServiceCard from '../ServiceCard/ServiceCard';
 import Button from '../ui/Button';
 import { RevealGroup, RevealItem } from '../ui/Reveal';
 import { services } from '../../data/services';
+import { shippingModes, rateZones } from '../../data/shippingRates';
+import { formatEUR } from '../../utils/format';
 import { whatsappLink } from '../../config/siteConfig';
 import './Services.css';
+
+/** Bento grid: aéreo y marítimo como piezas destacadas del mosaico. */
+const FEATURED = { aereo: 'dark', maritimo: 'sky' };
+const { air, sea } = shippingModes;
+/** Cifras clave de las piezas destacadas (todas salen de shippingRates.js). */
+const HIGHLIGHTS = {
+  aereo: [
+    { value: `${formatEUR(rateZones.main.rates.air).replace(',00', '')}`, label: 'por kg · ciudades principales' },
+    { value: `${air.minBillableKg}–${air.maxKg} kg`, label: 'por envío' },
+    { value: rateZones.main.transit.air.replace('aprox. ', ''), label: 'tiempo estimado' },
+  ],
+  maritimo: [
+    { value: `${sea.minBillableKg} kg`, label: 'mínimo facturable' },
+    { value: 'Sin límite', label: 'si cabe en un palet' },
+  ],
+};
 
 export default function Services() {
   return (
@@ -19,8 +37,8 @@ export default function Services() {
         />
         <RevealGroup className="services__grid" stagger={0.07}>
           {services.map((s, i) => (
-            <RevealItem key={s.id} className="services__cell">
-              <ServiceCard service={s} index={i} />
+            <RevealItem key={s.id} className={`services__cell services__cell--${s.id}`}>
+              <ServiceCard service={s} index={i} variant={FEATURED[s.id]} highlights={HIGHLIGHTS[s.id]} />
             </RevealItem>
           ))}
         </RevealGroup>

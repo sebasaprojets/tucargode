@@ -51,6 +51,8 @@ export const rateZones = {
       air: 'aprox. 12–15 días hábiles',
       sea: 'aprox. 2 meses y medio',
     },
+    /** Equivalente aproximado en semanas (solo para comparar visualmente). */
+    transitWeeks: { air: 3, sea: 10.5 },
   },
   other: {
     id: 'other',
@@ -60,6 +62,7 @@ export const rateZones = {
       air: 'aprox. 15–24 días hábiles',
       sea: 'aprox. 3 meses',
     },
+    transitWeeks: { air: 4, sea: 13 },
   },
 };
 

@@ -75,6 +75,41 @@
   box-shadow: 0 12px 32px -10px rgba(204, 77, 71, 0.9);
 }
 
+/* Brillo de la acción principal (patrones «Shiny Text» / «Star Border» de React Bits):
+   cada pocos segundos un reflejo cruza el botón y una luz recorre su borde. */
+@property --btn-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.btn--accent::before { animation: btn-shine 6s var(--ease-in-out, ease-in-out) 1.5s infinite; }
+.btn--accent:hover::before { animation: none; transform: translateX(120%); }
+@keyframes btn-shine {
+  0%, 62% { transform: translateX(-120%); }
+  82%, 100% { transform: translateX(120%); }
+}
+.btn--accent::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--btn-angle), transparent 0 72%, rgba(255, 236, 214, 0.95) 86%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0;
+  animation: btn-border 6s linear 1.5s infinite;
+  pointer-events: none;
+}
+@keyframes btn-border {
+  0%, 55% { --btn-angle: 0deg; opacity: 0; }
+  60% { opacity: 1; }
+  85% { opacity: 1; }
+  92%, 100% { --btn-angle: 360deg; opacity: 0; }
+}
+
 /* Secondary — outline that adapts to context */
 .btn--secondary {
   background: transparent;

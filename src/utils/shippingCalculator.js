@@ -112,3 +112,47 @@ export function calculateShipment(input) {
     quoteRequired: rate === null,
   };
 }
+
+/**
+ * Compara aéreo y marítimo para la misma carga y elige la mejor opción.
+ * Reglas derivadas de los límites publicados (aéreo 3–30 kg, marítimo desde 20 kg).
+ */
+export function compareModes(input) {
+  const { air: airMode, sea: seaMode } = shippingModes;
+  const air = calculateShipment({ ...input, mode: 'air' });
+  const sea = calculateShipment({ ...input, mode: 'sea' });
+  const airHeaviest = Math.max(air.realWeight, air.volumetricWeight ?? 0);
+  const airAllowed = !airMode.maxKg || airHeaviest <= airMode.maxKg;
+  let best = 'air';
+  let reason = `Más rápido y con precio por kilo publicado. Si no tienes prisa, el marítimo es ideal para volumen.`;
+  if (!airAllowed) {
+    best = 'sea';
+    reason = `El aéreo admite hasta ${airMode.maxKg} kg: para esta carga, el barco es la opción.`;
+  } else if (air.realWeight < seaMode.minBillableKg) {
+    reason = `Por debajo de ${seaMode.minBillableKg} kg el marítimo te facturaría igualmente ${seaMode.minBillableKg} kg.`;
+  }
+  return { air, sea, airAllowed, best, reason };
+}
+
+/** Mensaje de WhatsApp con todos los datos del cálculo, listo para enviar. */
+export function shipmentWhatsappMessage(input, r, { formatKg, formatEUR, formatNumber }) {
+  const lines = [
+    'Hola Tucargo, quiero confirmar este envío:',
+    `• Tipo: ${shippingModes[r.mode].label}`,
+    `• Destino: ${r.destination.label}`,
+    `• Peso real: ${formatKg(r.realWeight)}`,
+  ];
+  const l = toNumber(input.length);
+  const w = toNumber(input.width);
+  const h = toNumber(input.height);
+  if (l > 0 && w > 0 && h > 0) {
+    const vol = r.volumetricWeight !== null ? ` (peso volumétrico ${formatKg(Math.round(r.volumetricWeight * 100) / 100)})` : '';
+    lines.push(`• Medidas: ${formatNumber(l, 1)} × ${formatNumber(w, 1)} × ${formatNumber(h, 1)} cm${vol}`);
+  }
+  lines.push(`• Peso facturable: ${formatKg(r.billableWeight)}`);
+  r.extras.forEach((x) => lines.push(`• ${x.label}: ${formatEUR(x.total)}`));
+  if (r.customs) lines.push(`• Valor del contenido: ${formatEUR(toNumber(input.declaredValue))}`);
+  lines.push(r.total !== null ? `• Estimación de la calculadora: ${formatEUR(r.total)}` : '• Precio: cotización personalizada');
+  lines.push('', '¿Me confirman el precio y los pasos a seguir?');
+  return lines.join('\n');
+}

@@ -1,27 +1,60 @@
-.how__wrap { position: relative; }
-.how__steps { display: grid; gap: var(--space-xl); margin: 0; padding: 0 0 0 76px; list-style: none; }
+/* ---- Línea de tiempo que se dibuja al hacer scroll ---- */
+.how__timeline { position: relative; max-width: 980px; margin: 0 auto; }
 .how__rail {
   position: absolute;
   left: 27px;
-  top: 28px;
-  bottom: 28px;
   width: 2px;
-  background: var(--color-border);
+  margin-left: -1px;
   border-radius: 2px;
-  overflow: hidden;
+  background: var(--color-border);
 }
 .how__fill {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, var(--color-primary), var(--color-accent));
+  border-radius: inherit;
+  background: linear-gradient(to bottom, var(--color-primary), var(--sea-400) 60%, var(--color-accent));
   transform-origin: top;
-  transform: scaleY(var(--p, 0));
+  box-shadow: 0 0 12px rgba(1, 185, 255, 0.45);
 }
-.how__step { position: relative; }
-.how__icon {
+/* Barquito que recorre la línea */
+.how__boat {
   position: absolute;
-  left: -76px;
-  top: 0;
+  top: -20px;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--sea-500), var(--blue-700));
+  color: #fff;
+  box-shadow: 0 0 0 6px var(--color-background), 0 10px 24px -6px rgba(1, 120, 180, 0.6);
+  z-index: 2;
+}
+.how__boat svg { animation: how-bob 2.8s ease-in-out infinite; }
+@keyframes how-bob {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-2px) rotate(4deg); }
+}
+
+.how__steps {
+  position: relative;
+  display: grid;
+  gap: var(--space-xl);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.how__step {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.how__node {
+  position: relative;
+  z-index: 1;
   display: grid;
   place-items: center;
   width: 56px;
@@ -29,18 +62,60 @@
   border-radius: 50%;
   background: var(--white);
   border: 1px solid var(--color-border);
-  color: var(--color-primary);
+  color: var(--color-text-muted);
   box-shadow: 0 0 0 8px var(--color-background);
-  transition: transform var(--transition-normal), background-color var(--transition-normal), color var(--transition-normal);
+  transition: background-color 0.5s, color 0.5s, border-color 0.5s, box-shadow 0.5s, transform 0.5s var(--ease-out, ease);
 }
-.how__step:hover .how__icon { background: var(--color-primary); color: var(--white); transform: scale(1.06); }
-.how__n { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-accent); font-weight: 600; }
-.how__step h3 { margin-top: 2px; font-size: var(--text-h3); text-transform: uppercase; letter-spacing: 0.02em; }
-.how__step p { margin-top: 6px; color: var(--color-text-secondary); max-width: 360px; }
+.how__card {
+  padding: 20px 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow: none;
+  border-style: dashed;
+  transform: translateY(14px);
+  /* sin opacidad: el texto mantiene buen contraste antes de «encenderse» */
+  transition: transform 0.6s var(--ease-out, ease), box-shadow 0.6s, border-color 0.6s, background-color 0.6s;
+}
+.how__n {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color 0.5s;
+}
+.how__card h3 { margin-top: 4px; font-size: var(--text-h3); text-transform: uppercase; letter-spacing: 0.02em; }
+.how__card p { margin-top: 6px; color: var(--color-text-secondary); }
 
+/* Paso alcanzado por el barco: se enciende */
+.how__step.is-lit .how__node {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--white);
+  transform: scale(1.06);
+  box-shadow: 0 0 0 8px var(--color-background), 0 0 0 11px rgba(1, 185, 255, 0.25), 0 10px 26px -8px rgba(0, 119, 168, 0.7);
+}
+.how__card { background: rgba(255, 255, 255, 0.55); }
+.how__step.is-lit .how__card {
+  background: var(--white);
+  border-style: solid;
+  transform: none;
+  border-color: rgba(1, 157, 216, 0.35);
+  box-shadow: var(--shadow-md);
+}
+.how__step.is-lit .how__n { color: var(--color-accent); }
+
+/* Escritorio: línea central y tarjetas alternadas */
 @media (min-width: 900px) {
-  .how__steps { grid-template-columns: repeat(4, 1fr); gap: var(--space-xl); padding: 0; }
-  .how__rail { left: 28px; right: 28px; top: 27px; bottom: auto; width: auto; height: 2px; }
-  .how__fill { transform-origin: left; transform: scaleX(var(--p, 0)); background: linear-gradient(to right, var(--color-primary), var(--color-accent)); }
-  .how__icon { position: relative; left: 0; margin-bottom: var(--space-lg); }
+  .how__rail { left: 50%; }
+  .how__steps { gap: var(--space-lg); }
+  .how__step { grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr); gap: 36px; }
+  .how__node { grid-column: 2; grid-row: 1; }
+  .how__step.is-left .how__card { grid-column: 1; grid-row: 1; text-align: right; }
+  .how__step.is-right .how__card { grid-column: 3; grid-row: 1; }
+  .how__step.is-left .how__card p { margin-left: auto; }
+  .how__card { max-width: 400px; }
+  .how__step.is-left .how__card { justify-self: end; }
 }

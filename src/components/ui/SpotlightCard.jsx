@@ -16,6 +16,8 @@ export default function SpotlightCard({ as: Tag = 'div', className = '', tilt = 
     const py = e.clientY - r.top;
     el.style.setProperty('--mx', `${px}px`);
     el.style.setProperty('--my', `${py}px`);
+    // posición relativa (0–100 %) para reflejos tipo «Glare Hover»
+    el.style.setProperty('--gx', `${(px / r.width) * 100}%`);
     if (tilt) {
       // Inclinación 3D suave hacia el cursor (transición lenta en CSS)
       el.style.setProperty('--ry', `${((px / r.width) - 0.5) * tilt}deg`);

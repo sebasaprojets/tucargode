@@ -39,6 +39,17 @@
     transition: transform var(--transition-fast), background-color var(--transition-fast);
   }
   .mbar__primary:active { transform: scale(0.97); background: var(--color-accent-hover); }
+  /* Reflejo periódico en la acción principal (mismo efecto que .btn--accent) */
+  .mbar__primary { position: relative; overflow: hidden; isolation: isolate; }
+  .mbar__primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+    transform: translateX(-120%);
+    animation: btn-shine 6s ease-in-out 1.5s infinite;
+  }
   .mbar__icon {
     display: grid;
     place-items: center;

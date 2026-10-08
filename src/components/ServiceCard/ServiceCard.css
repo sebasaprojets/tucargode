@@ -72,3 +72,93 @@
 .service-card__cta svg { transition: transform var(--transition-normal); }
 .service-card__cta:hover svg { transform: translate(3px, -3px); }
 .service-card__cta:hover { color: var(--color-primary-dark); }
+
+/* ---- Reflejo «Glare Hover» ---- */
+.service-card { overflow: hidden; }
+.service-card__glare {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 38%, rgba(1, 157, 216, 0.1) 47%, rgba(255, 255, 255, 0.5) 50%, rgba(1, 157, 216, 0.08) 53%, transparent 62%);
+  background-size: 260% 100%;
+  background-position: calc(110% - var(--gx, 50%)) 0;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .service-card:hover .service-card__glare { opacity: 1; }
+}
+.service-card > *:not(.service-card__glare):not(.service-card__art) { position: relative; z-index: 1; }
+
+/* ---- Piezas destacadas del bento ---- */
+.service-card__art {
+  position: absolute;
+  right: -30px;
+  bottom: -40px;
+  z-index: 0;
+  opacity: 0.12;
+  transform: rotate(-8deg);
+  transition: transform 0.8s var(--ease-out), opacity 0.8s;
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .service-card:hover .service-card__art { transform: rotate(-2deg) translate(-10px, -8px) scale(1.04); opacity: 0.18; }
+}
+.service-card--dark {
+  background:
+    radial-gradient(90% 70% at 100% 0%, rgba(1, 185, 255, 0.35), transparent 60%),
+    linear-gradient(160deg, var(--navy-900), var(--navy-950));
+  border-color: rgba(127, 214, 248, 0.2);
+  color: var(--white);
+}
+.service-card--dark .service-card__art { color: var(--sea-400); opacity: 0.22; }
+.service-card--dark .service-card__icon { background: rgba(1, 185, 255, 0.16); color: var(--blue-300); }
+.service-card--dark .service-card__title { font-size: clamp(2rem, 1.4rem + 1.6vw, 2.75rem); }
+.service-card--dark .service-card__desc { color: rgba(255, 255, 255, 0.75); font-size: var(--text-body-lg); max-width: 420px; }
+.service-card--dark .service-card__list { color: rgba(255, 255, 255, 0.85); border-color: rgba(255, 255, 255, 0.15); }
+.service-card--dark .service-card__list svg { color: var(--blue-300); }
+.service-card--dark .service-card__index { color: rgba(255, 255, 255, 0.5); }
+.service-card--dark .service-card__cta { color: var(--blue-300); }
+.service-card--dark .service-card__cta:hover { color: var(--white); }
+.service-card--dark .service-card__glare {
+  background: linear-gradient(105deg, transparent 38%, rgba(127, 214, 248, 0.12) 47%, rgba(255, 255, 255, 0.22) 50%, rgba(127, 214, 248, 0.1) 53%, transparent 62%);
+  background-size: 260% 100%;
+  background-position: calc(110% - var(--gx, 50%)) 0;
+}
+.service-card--sky {
+  background:
+    radial-gradient(80% 90% at 100% 100%, rgba(1, 185, 255, 0.22), transparent 60%),
+    linear-gradient(160deg, var(--sky-100, #E1F5FE), var(--white));
+  border-color: rgba(1, 157, 216, 0.25);
+}
+.service-card--sky .service-card__art { color: var(--sea-500); opacity: 0.14; }
+
+/* Cifras clave de las piezas destacadas */
+.service-card__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: var(--space-lg) 0 0;
+}
+.service-card__stats div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+  min-width: 120px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(1, 157, 216, 0.08);
+  border: 1px solid rgba(1, 157, 216, 0.18);
+}
+.service-card__stats dt { font-size: 0.75rem; color: var(--color-text-muted); }
+.service-card__stats dd { margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; color: var(--color-primary-dark); }
+.service-card--dark .service-card__stats div { background: rgba(255, 255, 255, 0.06); border-color: rgba(127, 214, 248, 0.2); }
+.service-card--dark .service-card__stats dt { color: rgba(255, 255, 255, 0.6); }
+.service-card--dark .service-card__stats dd { color: var(--white); font-size: clamp(1.25rem, 1rem + 0.8vw, 1.75rem); }
+/* Pieza grande: título arriba, cifras y lista abajo, avión de fondo en el centro */
+.service-card--dark .service-card__stats { margin-top: auto; padding-top: var(--space-xl); }
+.service-card--dark .service-card__cta { margin-top: 0; }
+.service-card--dark .service-card__art { top: 22%; bottom: auto; right: -50px; }
+.service-card--dark .service-card__art svg { width: 300px; height: 300px; }
